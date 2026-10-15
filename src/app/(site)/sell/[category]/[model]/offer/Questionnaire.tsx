@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Check, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Lock } from "lucide-react";
 import type { CategoryId } from "@/data/catalog";
-import { type Answers, type Condition, conditionFromAnswers } from "@/lib/pricing";
+import { type Answers, CONDITION_LABELS, type Condition, conditionFromAnswers } from "@/lib/pricing";
+import { QuoteSummary } from "@/components/QuoteSummary";
 
 const FUNCTIONAL_CHECKS = [
   "Screen works and fully lights up",
@@ -20,36 +22,91 @@ const FUNCTIONAL_CHECKS = [
 
 const COSMETIC: { id: Exclude<Condition, "broken">; title: string; body: string }[] = [
   { id: "flawless", title: "Flawless or like new", body: "No scratches, scuffs or signs of use." },
-  { id: "good", title: "Lightly used", body: "Minor signs of normal use, light scratches visible only up close." },
+  { id: "good", title: "Lightly used", body: "Light signs of normal use, visible only up close." },
   { id: "fair", title: "Scratched or scuffed", body: "Obvious scratches, scuffs or nicks on the screen or body." },
-  { id: "poor", title: "Damaged or broken", body: "Bent, chipped, dented or sun-bleached. No cracks." },
+  { id: "poor", title: "Damaged", body: "Bent, chipped, dented or sun-bleached. No cracks." },
 ];
 
-function YesNo({ value, onChange }: { value: boolean | undefined; onChange: (v: boolean) => void }) {
-  return (
-    <div className="mt-3 flex gap-3">
-      <button type="button" className="choice min-w-20" data-active={value === true} onClick={() => onChange(true)}>Yes</button>
-      <button type="button" className="choice min-w-20" data-active={value === false} onClick={() => onChange(false)}>No</button>
-    </div>
-  );
-}
+type YesNoKey = "powersOn" | "functional" | "noCracks";
 
 interface Props {
   variant: string;
   offers: Record<Condition, number>;
   kind: "phone" | "tablet";
-  brand: CategoryId;
+  category: CategoryId;
+  modelSlug: string;
+  modelName: string;
+  storage: string;
+  carrierLabel: string;
+  carrierTitle: string;
 }
 
-export function Questionnaire({ variant, offers, kind, brand }: Props) {
+function Question({
+  n,
+  title,
+  locked,
+  invalid,
+  children,
+}: {
+  n: number;
+  title: string;
+  locked: boolean;
+  invalid: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <fieldset className={`rounded-2xl border p-5 transition md:p-6 ${invalid ? "border-danger bg-danger-soft/40" : "border-line bg-white"}`} disabled={locked}>
+      <legend className="sr-only">{title}</legend>
+      <div className="flex items-start gap-3">
+        <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-bold ${locked ? "bg-paper text-muted" : "bg-brand text-white"}`}>
+          {locked ? <Lock className="h-3.5 w-3.5" /> : n}
+        </span>
+        <h2 className={`font-display pt-0.5 text-lg font-bold leading-snug ${locked ? "text-muted" : ""}`} aria-hidden>
+          {title}
+        </h2>
+      </div>
+      <div className="mt-4 md:pl-10">{children}</div>
+      {invalid && <p className="mt-3 text-sm font-medium text-danger md:pl-10">Please answer this question to continue.</p>}
+    </fieldset>
+  );
+}
+
+export function Questionnaire(props: Props) {
+  const { variant, offers, kind, category, modelSlug, modelName, storage, carrierLabel, carrierTitle } = props;
+  const router = useRouter();
   const [a, setA] = useState<Partial<Answers>>({});
+  const [tried, setTried] = useState(false);
   const set = (patch: Partial<Answers>) => setA((prev) => ({ ...prev, ...patch }));
   const condition = conditionFromAnswers(a);
   const offer = condition ? offers[condition] : null;
 
-  const q2Enabled = a.powersOn === true;
-  const q3Enabled = q2Enabled && a.functional === true;
-  const q4Enabled = q3Enabled && a.noCracks === true;
+  const locked2 = a.powersOn !== true;
+  const locked3 = locked2 || a.functional !== true;
+  const locked4 = locked3 || a.noCracks !== true;
+  // First unanswered, unlocked question — used for the error state.
+  const missing: number | null =
+    condition ? null : a.powersOn === undefined ? 1 : a.functional === undefined ? 2 : a.noCracks === undefined ? 3 : 4;
+
+  const yesNo = (key: YesNoKey, q: number, locked: boolean) => (
+    <div className="grid max-w-sm grid-cols-2 gap-3" role="radiogroup">
+      {[true, false].map((val) => (
+        <button
+          key={String(val)}
+          type="button"
+          role="radio"
+          aria-checked={a[key] === val}
+          data-selected={a[key] === val}
+          data-invalid={tried && missing === q}
+          disabled={locked}
+          className="option"
+          onClick={() => set({ [key]: val })}
+        >
+          <span className="option-dot" aria-hidden />
+          {val ? "Yes" : "No"}
+        </button>
+      ))}
+    </div>
+  );
 
   const params = new URLSearchParams({
     v: variant,
@@ -59,72 +116,118 @@ export function Questionnaire({ variant, offers, kind, brand }: Props) {
     k: a.cosmetic ?? "",
   });
 
+  const next = () => {
+    if (!condition) {
+      setTried(true);
+      return;
+    }
+    router.push(`/checkout?${params}`);
+  };
+
+  const continueButton = (
+    <button type="button" onClick={next} className="btn btn-primary w-full" aria-disabled={!condition}>
+      Continue <ArrowRight className="h-4 w-4" />
+    </button>
+  );
+
   return (
-    <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_340px]">
-      <div className="space-y-8">
-        <h2 className="text-2xl font-bold">Let&apos;s determine the condition</h2>
+    <div className="grid gap-8 pb-24 lg:grid-cols-[1fr_360px] lg:pb-0">
+      <div className="card p-5 md:p-8">
+        <Link href={`/sell/${category}/${modelSlug}`} className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted hover:text-ink">
+          <ArrowLeft className="h-4 w-4" /> Change {carrierTitle.toLowerCase()} or storage
+        </Link>
+        <h1 className="mt-4 text-[28px] font-extrabold leading-tight md:text-4xl">What condition is it in?</h1>
+        <p className="mt-2 text-muted">Answer honestly — your offer updates as you go.</p>
 
-        <div>
-          <h3 className="font-semibold">1. Does the device power on?</h3>
-          <YesNo value={a.powersOn} onChange={(v) => set({ powersOn: v })} />
+        <div className="mt-8 space-y-4">
+          <Question n={1} title="Does the device power on?" locked={false} invalid={tried && missing === 1}>
+            {yesNo("powersOn", 1, false)}
+          </Question>
+
+          <Question n={2} title="Is it fully functional, with the whole screen lighting up correctly?" locked={locked2} invalid={tried && missing === 2}>
+            <p className="text-sm text-muted">Answer “Yes” only if all of these work:</p>
+            <ul className="mb-4 mt-2 grid gap-x-6 gap-y-1 text-sm text-ink-2 sm:grid-cols-2">
+              {FUNCTIONAL_CHECKS.filter((c) => kind === "phone" || !c.startsWith("Cellular")).map((c) => (
+                <li key={c} className="flex items-start gap-2">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> {c}
+                </li>
+              ))}
+            </ul>
+            {yesNo("functional", 2, locked2)}
+          </Question>
+
+          <Question n={3} title="Are the front and back free of cracks?" locked={locked3} invalid={tried && missing === 3}>
+            {yesNo("noCracks", 3, locked3)}
+          </Question>
+
+          <Question n={4} title="What’s the overall cosmetic condition?" locked={locked4} invalid={tried && missing === 4}>
+            <div className="grid gap-3 sm:grid-cols-2" role="radiogroup">
+              {COSMETIC.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={a.cosmetic === c.id}
+                  data-selected={a.cosmetic === c.id}
+                  data-invalid={tried && missing === 4}
+                  disabled={locked4}
+                  onClick={() => set({ cosmetic: c.id })}
+                  className="option !items-start !py-4"
+                >
+                  <span className="option-dot mt-0.5" aria-hidden />
+                  <span>
+                    <span className="block">{c.title}</span>
+                    <span className="mt-0.5 block text-sm font-normal text-muted">{c.body}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </Question>
         </div>
 
-        <div className={q2Enabled ? "" : "pointer-events-none opacity-40"}>
-          <h3 className="font-semibold">2. Is the device fully functional and does the whole screen light up correctly?</h3>
-          <p className="mt-2 text-sm text-muted">Yes, if all of these work correctly:</p>
-          <ul className="mt-2 grid gap-1 text-sm text-muted sm:grid-cols-2">
-            {FUNCTIONAL_CHECKS.filter((c) => kind === "phone" || !c.startsWith("Cellular")).map((c) => (
-              <li key={c} className="flex items-start gap-2">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-cash" /> {c}
-              </li>
-            ))}
-          </ul>
-          <YesNo value={a.functional} onChange={(v) => set({ functional: v })} />
-        </div>
+        {condition === "broken" && (
+          <p className="mt-4 rounded-xl bg-paper p-4 text-sm text-ink-2">
+            Based on your answers, your device is quoted as <strong>not fully working or cracked</strong>. You can still sell it.
+          </p>
+        )}
 
-        <div className={q3Enabled ? "" : "pointer-events-none opacity-40"}>
-          <h3 className="font-semibold">3. Are the front and back free of cracks?</h3>
-          <YesNo value={a.noCracks} onChange={(v) => set({ noCracks: v })} />
-        </div>
-
-        <div className={q4Enabled ? "" : "pointer-events-none opacity-40"}>
-          <h3 className="font-semibold">4. What&apos;s the overall cosmetic condition?</h3>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            {COSMETIC.map((c) => (
-              <button
-                key={c.id}
-                type="button"
-                onClick={() => set({ cosmetic: c.id })}
-                data-active={a.cosmetic === c.id}
-                className="rounded-xl border-[1.5px] border-line p-4 text-left transition hover:border-brand data-[active=true]:border-brand data-[active=true]:bg-brand-soft"
-              >
-                <span className="block font-semibold">{c.title}</span>
-                <span className="mt-1 block text-sm text-muted">{c.body}</span>
-              </button>
-            ))}
-          </div>
+        <div className="mt-8 flex flex-col-reverse gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <Link href={`/sell/${category}/${modelSlug}`} className="btn btn-secondary">
+            <ArrowLeft className="h-4 w-4" /> Back
+          </Link>
         </div>
       </div>
 
-      <aside className="h-fit rounded-2xl border border-line bg-paper p-6 lg:sticky lg:top-32">
-        <p className="text-sm font-semibold uppercase tracking-wider text-muted">Your PrimeTeq offer</p>
-        <p className={`mt-2 text-5xl font-extrabold ${offer ? "text-cash" : "text-muted/50"}`}>
-          {offer ? `$${offer.toLocaleString("en-US")}` : "$---"}
-        </p>
-        {condition === "broken" && <p className="mt-2 text-sm text-muted">Offer for a device that is not fully working or has cracks.</p>}
-        <p className="mt-4 text-sm text-muted">
-          If your device is in better condition than you described, we&apos;ll increase your offer.
-        </p>
-        {offer ? (
-          <Link href={`/checkout?${params}`} className="btn btn-primary mt-6 w-full">Get paid</Link>
-        ) : (
-          <button className="btn btn-primary mt-6 w-full" disabled>Get paid</button>
-        )}
-        <p className="mt-4 flex items-start gap-2 text-xs text-muted">
-          <ShieldCheck className="h-4 w-4 shrink-0 text-cash" />
-          Offer locked for 30 days. We don&apos;t buy devices reported lost or stolen{brand === "iphone" || brand === "ipad" ? " or with Activation Lock on" : ""}.
-        </p>
-      </aside>
+      {/* Mobile / tablet: sticky offer bar */}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-white/95 px-4 py-3 shadow-[0_-8px_24px_rgb(11_22_64/0.06)] backdrop-blur lg:hidden">
+        <div className="mx-auto flex max-w-2xl items-center gap-4">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold text-muted">Your offer</p>
+            <p className={`font-display text-2xl font-extrabold leading-tight ${offer ? "text-ink" : "text-muted/40"}`} aria-live="polite">
+              {offer ? `$${offer.toLocaleString("en-US")}` : "$ ‑‑‑"}
+            </p>
+          </div>
+          <div className="w-40 sm:w-52">{continueButton}</div>
+        </div>
+      </div>
+
+      <QuoteSummary
+        category={category}
+        title={modelName}
+        rows={[
+          { label: carrierTitle, value: carrierLabel },
+          { label: "Storage", value: storage },
+          { label: "Condition", value: condition ? CONDITION_LABELS[condition] : null },
+        ]}
+        offer={offer}
+        footer={
+          <>
+            Your offer is based on your answers. Inspection and final-amount policy: <span className="placeholder-note">To be confirmed</span>
+          </>
+        }
+      >
+        <div className="mt-5 hidden lg:block">{continueButton}</div>
+      </QuoteSummary>
     </div>
   );
 }

@@ -1,14 +1,16 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { CARRIER_LABELS } from "@/data/catalog";
 import { quoteById } from "@/lib/db";
 import { CONDITION_LABELS } from "@/lib/pricing";
 import { parseAnswers } from "@/lib/quote-params";
-import { DeviceArt } from "@/components/DeviceArt";
-import { Steps } from "@/components/Steps";
+import { FlowBar } from "@/components/FlowBar";
+import { QuoteSummary } from "@/components/QuoteSummary";
 import { CheckoutForm } from "./CheckoutForm";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Get paid" };
+export const metadata = { title: "Payment & shipping details" };
 
 export default async function CheckoutPage({ searchParams }: PageProps<"/checkout">) {
   const sp = await searchParams;
@@ -19,32 +21,36 @@ export default async function CheckoutPage({ searchParams }: PageProps<"/checkou
 
   const offer = data.quote.offers[parsed.condition];
   const hidden = { v: get("v")!, p: get("p") ?? "", f: get("f") ?? "", n: get("n") ?? "", k: get("k") ?? "" };
+  const carrierTitle = data.category.kind === "tablet" ? "Connectivity" : "Carrier";
 
   return (
     <>
-      <Steps current={2} />
-      <section className="container-page grid gap-10 py-10 lg:grid-cols-[1fr_340px]">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Almost done</h1>
-          <p className="mt-1 text-muted">Tell us how to pay you and where to send your free shipping label.</p>
-          <CheckoutForm hidden={hidden} />
+      <FlowBar category={data.category.id} current={2} />
+      <section className="bg-paper">
+        <div className="container-page grid gap-8 py-8 md:py-12 lg:grid-cols-[1fr_360px]">
+          <div className="card p-5 md:p-8">
+            <Link
+              href={`/sell/${data.category.id}/${data.model.slug}/offer?v=${hidden.v}`}
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted hover:text-ink"
+            >
+              <ArrowLeft className="h-4 w-4" /> Edit condition
+            </Link>
+            <h1 className="mt-4 text-[28px] font-extrabold leading-tight md:text-4xl">Almost done.</h1>
+            <p className="mt-2 text-muted">Tell us how you’d like to be paid and where you’ll ship from.</p>
+            <CheckoutForm hidden={hidden} />
+          </div>
+          <QuoteSummary
+            category={data.category.id}
+            title={data.model.name}
+            rows={[
+              { label: carrierTitle, value: CARRIER_LABELS[data.carrier] },
+              { label: "Storage", value: data.storage.label },
+              { label: "Condition", value: CONDITION_LABELS[parsed.condition] },
+            ]}
+            offer={offer}
+            footer={`Offer valid for ${data.settings.offerValidDays} days after you accept it.`}
+          />
         </div>
-        <aside className="h-fit rounded-2xl border border-line bg-paper p-6 lg:sticky lg:top-32">
-          <p className="text-sm font-semibold uppercase tracking-wider text-muted">Your device</p>
-          <div className="mt-4 flex items-center gap-4">
-            <DeviceArt category={data.category.id} className="h-16 shrink-0" />
-            <div className="text-sm">
-              <p className="font-bold">{data.model.name}</p>
-              <p className="text-muted">{data.storage.label} · {CARRIER_LABELS[data.carrier]}</p>
-              <p className="text-muted">{CONDITION_LABELS[parsed.condition]}</p>
-            </div>
-          </div>
-          <div className="mt-6 flex items-end justify-between border-t border-line pt-4">
-            <span className="font-semibold">Your offer</span>
-            <span className="text-3xl font-extrabold text-cash">${offer.toLocaleString("en-US")}</span>
-          </div>
-          <p className="mt-2 text-xs text-muted">Free shipping. Offer locked for {data.settings.offerValidDays} days.</p>
-        </aside>
       </section>
     </>
   );

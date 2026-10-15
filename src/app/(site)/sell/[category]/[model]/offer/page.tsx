@@ -1,9 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CARRIER_LABELS } from "@/data/catalog";
 import { quoteById } from "@/lib/db";
-import { DeviceArt } from "@/components/DeviceArt";
-import { Steps } from "@/components/Steps";
+import { FlowBar } from "@/components/FlowBar";
 import { Questionnaire } from "./Questionnaire";
 
 export const dynamic = "force-dynamic";
@@ -17,20 +15,21 @@ export default async function OfferPage({ searchParams }: PageProps<"/sell/[cate
 
   return (
     <>
-      <Steps current={1} />
-      <section className="container-page py-10">
-        <div className="flex items-center gap-5 border-b border-line pb-6">
-          <DeviceArt category={category.id} className="h-20 shrink-0" />
-          <div>
-            <h1 className="text-xl font-extrabold sm:text-2xl">
-              {model.name} {storage.label} ({CARRIER_LABELS[carrier]})
-            </h1>
-            <Link href={`/sell/${category.id}/${model.slug}`} className="text-sm font-semibold text-brand hover:underline">
-              Change model
-            </Link>
-          </div>
+      <FlowBar category={category.id} current={1} />
+      <section className="bg-paper">
+        <div className="container-page py-8 md:py-12">
+          <Questionnaire
+            variant={v as string}
+            offers={quote.offers}
+            kind={category.kind}
+            category={category.id}
+            modelSlug={model.slug}
+            modelName={model.name}
+            storage={storage.label}
+            carrierLabel={CARRIER_LABELS[carrier]}
+            carrierTitle={category.kind === "tablet" ? "Connectivity" : "Carrier"}
+          />
         </div>
-        <Questionnaire variant={v as string} offers={quote.offers} kind={category.kind} brand={category.id} />
       </section>
     </>
   );

@@ -175,6 +175,44 @@ export const MODELS: DeviceModel[] = [
 
 export const storageSlug = (label: string) => label.toLowerCase();
 
+/** Where to find the exact model name on the device (shown under “Which model do I have?”). */
+export const FIND_MODEL_TIP: Record<CategoryId, string> = {
+  iphone: "Open Settings → General → About. Your iPhone’s model name is listed at the top.",
+  samsung: "Open Settings → About phone. The model name is shown at the top of the screen.",
+  google: "Open Settings → About phone. Look for “Model” or “Device name”.",
+  ipad: "Open Settings → General → About. Your iPad’s model name is listed at the top.",
+};
+
+/** Generation / family label used to group the model chooser. Derived from the model name. */
+export function groupLabel(model: DeviceModel): string {
+  const n = model.name;
+  switch (model.category) {
+    case "iphone": {
+      if (model.slug === "iphone-air") return "iPhone 17 family";
+      if (/SE/.test(n)) return "iPhone SE";
+      if (/iPhone X/.test(n)) return "iPhone XS & XR";
+      const g = n.match(/iPhone (\d+)/);
+      return g ? `iPhone ${g[1]} family` : "Other iPhone";
+    }
+    case "samsung": {
+      if (/Galaxy Z/.test(n)) return "Galaxy Z Fold & Flip";
+      const g = n.match(/Galaxy S(\d+)/);
+      return g ? `Galaxy S${g[1]} series` : "Other Galaxy";
+    }
+    case "google": {
+      if (/Pixel Fold/.test(n)) return "Pixel Fold";
+      const g = n.match(/Pixel (\d+)/);
+      return g ? `Pixel ${g[1]} series` : "Other Pixel";
+    }
+    case "ipad": {
+      if (/iPad Pro/.test(n)) return "iPad Pro";
+      if (/iPad Air/.test(n)) return "iPad Air";
+      if (/iPad mini/.test(n)) return "iPad mini";
+      return "iPad";
+    }
+  }
+}
+
 export function getCategory(id: string) {
   return CATEGORIES.find((c) => c.id === id);
 }

@@ -1,0 +1,121 @@
+import Link from "next/link";
+import { HashOpener } from "./HashOpener";
+import { ClipboardCheck, ListChecks, PackageOpen, Route, ShieldCheck, Smartphone, Workflow } from "lucide-react";
+
+export function HowItWorks() {
+  const steps = [
+    { icon: Smartphone, title: "Select your device", body: "Choose the brand, model, storage and carrier of the device you want to sell." },
+    { icon: ClipboardCheck, title: "Review your offer", body: "Answer a few questions about its condition and see your offer as you go." },
+    { icon: PackageOpen, title: "Follow the instructions", body: "Accept your offer and we’ll send the next steps to prepare and send your device." },
+    { icon: Workflow, title: "Complete your trade", body: "Once your device is checked, we finalize your trade with the payment method you chose." },
+  ];
+  return (
+    <section id="how-it-works" className="scroll-mt-28 bg-white">
+      <div className="container-page py-16 md:py-24">
+        <div className="max-w-2xl">
+          <p className="eyebrow">How it works</p>
+          <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">Four steps, start to finish.</h2>
+        </div>
+        <ol className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {steps.map((s, i) => (
+            <li key={s.title} className="relative">
+              <div className="flex items-center gap-3">
+                <span className="grid h-11 w-11 place-items-center rounded-xl border border-line bg-white text-brand">
+                  <s.icon className="h-5 w-5" strokeWidth={1.75} />
+                </span>
+                <span className="font-display text-sm font-bold text-muted">0{i + 1}</span>
+              </div>
+              <h3 className="mt-5 text-lg font-bold">{s.title}</h3>
+              <p className="mt-2 text-[15px] text-muted">{s.body}</p>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-10 text-sm text-muted">
+          Shipping and payment details: <span className="placeholder-note">Policy to be confirmed</span>
+        </p>
+      </div>
+    </section>
+  );
+}
+
+export function TrustGrid() {
+  const items = [
+    { icon: ListChecks, title: "Clear steps", body: "One question at a time, with your progress always visible." },
+    { icon: Route, title: "Straightforward process", body: "From model to offer in a single, guided flow — no listings to create." },
+    { icon: ShieldCheck, title: "Trade with confidence", body: "Your offer, your device details and your order status, all in one place." },
+  ];
+  return (
+    <section className="bg-paper">
+      <div className="container-page py-16 md:py-24">
+        <div className="max-w-2xl">
+          <p className="eyebrow">Why Prime Teq</p>
+          <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">Selling tech, made simple.</h2>
+        </div>
+        <div className="mt-12 grid gap-4 md:grid-cols-3">
+          {items.map((it) => (
+            <div key={it.title} className="card p-6">
+              <it.icon className="h-6 w-6 text-brand" strokeWidth={1.75} />
+              <h3 className="mt-5 text-lg font-bold">{it.title}</h3>
+              <p className="mt-2 text-[15px] text-muted">{it.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export interface FaqItem {
+  id?: string;
+  q: string;
+  a: React.ReactNode;
+}
+
+export function Faq({ items, title = "Questions, answered." }: { items: FaqItem[]; title?: string }) {
+  return (
+    <section id="faq" className="scroll-mt-28 bg-white">
+      <HashOpener />
+      <div className="container-page grid gap-10 py-16 md:py-24 lg:grid-cols-[1fr_1.6fr]">
+        <div>
+          <p className="eyebrow">FAQ</p>
+          <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">{title}</h2>
+          <p className="mt-4 text-muted">
+            Still need help? <span className="placeholder-note">Support contact — to confirm</span>
+          </p>
+        </div>
+        <div className="divide-y divide-line border-y border-line">
+          {items.map((f) => (
+            <details key={f.q} id={f.id} className="group scroll-mt-32">
+              <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-6 py-4 text-left font-semibold [&::-webkit-details-marker]:hidden">
+                {f.q}
+                <span
+                  aria-hidden
+                  className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line text-brand transition group-open:rotate-45 group-open:border-brand"
+                >
+                  +
+                </span>
+              </summary>
+              <div className="pb-6 pr-12 text-[15px] text-muted">{f.a}</div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function ClosingCta({ href, label }: { href: string; label: string }) {
+  return (
+    <section className="relative overflow-hidden bg-ink text-white">
+      <span aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full border-[28px] border-brand/70" />
+      <div className="container-page relative flex flex-col items-start gap-6 py-14 md:flex-row md:items-center md:justify-between md:py-16">
+        <h2 className="max-w-xl text-3xl font-extrabold md:text-[40px] md:leading-tight">Your next move starts here.</h2>
+        <Link href={href} className="btn btn-on-dark px-7">
+          {label}
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+export const PLACEHOLDER = (text = "Answer to be confirmed by Prime Teq") => <span className="placeholder-note">{text}</span>;

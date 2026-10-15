@@ -1,29 +1,29 @@
-export const metadata = { title: "Terms & price promise" };
+export const metadata = { title: "Terms of Service" };
 
-// Draft terms — have a lawyer review before launch.
+// Placeholder structure — Prime Teq must supply the actual policy text.
+const SECTIONS = ["Offers and how they’re calculated", "Inspection and final amount", "Eligibility", "Shipping", "Payment", "Your data"];
+
 export default function TermsPage() {
   return (
-    <section className="container-page py-16">
-      <div className="mx-auto max-w-3xl space-y-6 text-sm leading-relaxed text-ink-2">
-        <h1 className="text-3xl font-extrabold tracking-tight text-ink">Terms &amp; price promise</h1>
-        <p className="rounded-lg bg-amber-50 p-3 text-amber-800">Draft — to be reviewed before launch.</p>
-        <h2 className="text-lg font-bold text-ink">Price promise</h2>
-        <p>
-          We will pay the amount in your offer if the device you send matches the model, storage, carrier and condition you selected, and it arrives
-          before your offer expires (30 days after you accept it).
-        </p>
-        <h2 className="text-lg font-bold text-ink">If your device doesn&apos;t match</h2>
-        <p>
-          If the device is in better condition, we raise your offer. If it doesn&apos;t match your description, we send you a revised offer. You may
-          accept it, or we return the device to you free of charge.
-        </p>
-        <h2 className="text-lg font-bold text-ink">Eligibility</h2>
-        <p>
-          We do not purchase devices that are reported lost or stolen, blacklisted, under unpaid financing, or with an activation lock (Find My,
-          Google FRP) enabled. Accessories are not purchased and will not be returned.
-        </p>
-        <h2 className="text-lg font-bold text-ink">Your data</h2>
-        <p>Please erase your device before shipping. Any data left on received devices is wiped as part of our inspection.</p>
+    <section className="bg-paper">
+      <div className="container-page py-12 md:py-20">
+        <div className="card mx-auto max-w-3xl p-6 md:p-10">
+          <p className="eyebrow">Legal</p>
+          <h1 className="mt-2 text-3xl font-extrabold md:text-4xl">Terms of Service</h1>
+          <p className="mt-4 rounded-xl border border-dashed border-line bg-paper p-4 text-sm text-muted">
+            Placeholder — the final terms will be provided by Prime Teq. No policy below is in effect yet.
+          </p>
+          <div className="mt-8 space-y-6">
+            {SECTIONS.map((s) => (
+              <div key={s}>
+                <h2 className="font-display text-lg font-bold">{s}</h2>
+                <p className="mt-2 text-sm text-muted">
+                  <span className="placeholder-note">Policy text to be confirmed</span>
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
