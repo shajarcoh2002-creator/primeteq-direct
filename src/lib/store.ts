@@ -18,8 +18,12 @@ export interface StoredOrder {
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
-if (!DATABASE_URL && process.env.VERCEL) {
-  throw new Error("DATABASE_URL is required in production (Vercel). Connect a Postgres database to the project.");
+// On Vercel the filesystem is read-only, so data needs a database. Fail on first use (not at import),
+// so the build and static pages still work before the database is connected.
+function assertStorageAvailable() {
+  if (!DATABASE_URL && process.env.VERCEL) {
+    throw new Error("DATABASE_URL is required in production (Vercel). Connect a Postgres database to the project.");
+  }
 }
 
 // ---------- Postgres ----------
@@ -86,6 +90,7 @@ async function writeFile(file: string, data: unknown) {
 export const storageKind = DATABASE_URL ? "postgres" : "files";
 
 export async function getDoc<T>(key: string, fallback: T): Promise<T> {
+  assertStorageAvailable();
   if (!DATABASE_URL) return readFile(`${key}.json`, fallback);
   await ensureSchema();
   const rows = await sql()`select value from app_kv where key = ${key}`;
@@ -93,6 +98,7 @@ export async function getDoc<T>(key: string, fallback: T): Promise<T> {
 }
 
 export async function setDoc(key: string, value: unknown) {
+  assertStorageAvailable();
   if (!DATABASE_URL) return writeFile(`${key}.json`, value);
   await ensureSchema();
   const json = sql().json(value as Parameters<Sql["json"]>[0]);
@@ -101,6 +107,7 @@ export async function setDoc(key: string, value: unknown) {
 }
 
 export async function listOrders<T extends StoredOrder>(): Promise<T[]> {
+  assertStorageAvailable();
   if (!DATABASE_URL) {
     const orders = await readFile<T[]>("orders.json", []);
     return orders.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
@@ -111,6 +118,7 @@ export async function listOrders<T extends StoredOrder>(): Promise<T[]> {
 }
 
 export async function findOrder<T extends StoredOrder>(id: string): Promise<T | null> {
+  assertStorageAvailable();
   if (!DATABASE_URL) return (await listOrders<T>()).find((o) => o.id === id) ?? null;
   await ensureSchema();
   const rows = await sql()`select data from orders where id = ${id}`;
@@ -118,6 +126,7 @@ export async function findOrder<T extends StoredOrder>(id: string): Promise<T | 
 }
 
 export async function upsertOrder<T extends StoredOrder>(order: T) {
+  assertStorageAvailable();
   if (!DATABASE_URL) {
     const orders = await readFile<T[]>("orders.json", []);
     const i = orders.findIndex((o) => o.id === order.id);
