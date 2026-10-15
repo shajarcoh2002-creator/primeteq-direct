@@ -16,7 +16,8 @@ export interface StoredOrder {
   customer: { email: string };
 }
 
-const DATABASE_URL = process.env.DATABASE_URL;
+// DATABASE_URL is what the Neon integration sets; POSTGRES_URL covers Vercel Postgres-style setups.
+const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 
 // On Vercel the filesystem is read-only, so data needs a database. Fail on first use (not at import),
 // so the build and static pages still work before the database is connected.
@@ -139,4 +140,18 @@ export async function upsertOrder<T extends StoredOrder>(order: T) {
   await sql()`insert into orders (id, created_at, status, email, data)
     values (${order.id}, ${order.createdAt}, ${order.status}, ${order.customer.email}, ${json})
     on conflict (id) do update set status = excluded.status, email = excluded.email, data = excluded.data, updated_at = now()`;
+}
+
+/** Connectivity check for /api/health — never returns credentials. */
+export async function checkDatabase(): Promise<{ configured: boolean; ok: boolean; error?: string }> {
+  if (!DATABASE_URL) return { configured: false, ok: false };
+  try {
+    await ensureSchema();
+    await sql()`select 1`;
+    return { configured: true, ok: true };
+  } catch (e) {
+    const err = e as { code?: string; message?: string };
+    const message = (err.message ?? "unknown error").replace(/\S+@\S+/g, "[redacted]").slice(0, 200);
+    return { configured: true, ok: false, error: [err.code, message].filter(Boolean).join(": ") };
+  }
 }
