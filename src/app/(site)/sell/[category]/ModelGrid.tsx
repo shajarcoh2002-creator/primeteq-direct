@@ -4,12 +4,13 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowRight, Search, X } from "lucide-react";
 import type { CategoryId } from "@/data/catalog";
-import { DeviceArt } from "@/components/DeviceArt";
+import { DevicePhoto } from "@/components/DevicePhoto";
 
 interface Item {
   slug: string;
   name: string;
   group: string;
+  photo: string | null;
   storage: string[];
   upTo: number;
 }
@@ -60,7 +61,7 @@ export function ModelGrid({ category, categoryName, models }: { category: Catego
                   href={`/sell/${category}/${m.slug}`}
                   className="group flex min-h-44 flex-col rounded-[18px] border border-line bg-white p-4 transition hover:-translate-y-0.5 hover:border-brand hover:shadow-[var(--shadow-lift)] focus-visible:border-brand md:p-5"
                 >
-                  <DeviceArt category={category} className="h-20 self-start md:h-24" />
+                  <DevicePhoto category={category} photo={m.photo} alt={m.name} className="h-24 w-full md:h-28" sizes="(min-width: 1024px) 200px, 45vw" />
                   <span className="font-display mt-4 text-[15px] font-bold leading-snug md:text-base">{m.name}</span>
                   <span className="mt-1 text-xs text-muted">{m.storage.join(" · ")}</span>
                   <span className="mt-auto flex items-center justify-between pt-3 text-xs font-semibold">

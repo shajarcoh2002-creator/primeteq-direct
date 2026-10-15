@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getCategory, getModel } from "@/data/catalog";
 import { FlowBar } from "@/components/FlowBar";
+import { getDevicePhoto } from "@/lib/photos";
 import { VariantPicker } from "./VariantPicker";
 
 export async function generateMetadata({ params }: PageProps<"/sell/[category]/[model]">) {
@@ -13,6 +14,7 @@ export default async function ModelPage({ params }: PageProps<"/sell/[category]/
   const model = getModel(p.model);
   const category = getCategory(p.category);
   if (!model || !category || model.category !== category.id) notFound();
+  const photo = await getDevicePhoto(model.slug);
 
   return (
     <>
@@ -23,6 +25,7 @@ export default async function ModelPage({ params }: PageProps<"/sell/[category]/
             category={category.id}
             modelSlug={model.slug}
             modelName={model.name}
+            photo={photo}
             carriers={category.carriers}
             storage={model.storage.map((s) => s.label)}
             kind={category.kind}

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { CARRIER_LABELS } from "@/data/catalog";
 import { quoteById } from "@/lib/db";
 import { FlowBar } from "@/components/FlowBar";
+import { getDevicePhoto } from "@/lib/photos";
 import { Questionnaire } from "./Questionnaire";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +13,7 @@ export default async function OfferPage({ searchParams }: PageProps<"/sell/[cate
   const data = typeof v === "string" ? await quoteById(v) : null;
   if (!data) notFound();
   const { model, storage, carrier, category, quote } = data;
+  const photo = await getDevicePhoto(model.slug);
 
   return (
     <>
@@ -25,6 +27,7 @@ export default async function OfferPage({ searchParams }: PageProps<"/sell/[cate
             category={category.id}
             modelSlug={model.slug}
             modelName={model.name}
+            photo={photo}
             storage={storage.label}
             carrierLabel={CARRIER_LABELS[carrier]}
             carrierTitle={category.kind === "tablet" ? "Connectivity" : "Carrier"}

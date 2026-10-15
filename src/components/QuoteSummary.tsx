@@ -1,5 +1,5 @@
 import type { CategoryId } from "@/data/catalog";
-import { DeviceArt } from "./DeviceArt";
+import { DevicePhoto } from "./DevicePhoto";
 
 export interface SummaryRow {
   label: string;
@@ -9,6 +9,7 @@ export interface SummaryRow {
 /** Persistent order/quote summary used across the configurator. Shows only real selections. */
 export function QuoteSummary({
   category,
+  photo,
   title,
   rows,
   offer,
@@ -16,6 +17,7 @@ export function QuoteSummary({
   children,
 }: {
   category: CategoryId;
+  photo?: string | null;
   title: string;
   rows: SummaryRow[];
   offer?: number | null;
@@ -26,7 +28,7 @@ export function QuoteSummary({
     <aside className="card h-fit p-6 lg:sticky lg:top-28">
       <p className="eyebrow">Your trade</p>
       <div className="mt-4 flex items-center gap-4">
-        <DeviceArt category={category} className="h-16 shrink-0" />
+        <DevicePhoto category={category} photo={photo} alt={title} className="h-20 w-16" sizes="64px" />
         <p className="font-display text-lg font-extrabold leading-snug">{title}</p>
       </div>
       <dl className="mt-5 divide-y divide-line border-y border-line text-sm">

@@ -11,12 +11,13 @@ interface Props {
   category: CategoryId;
   modelSlug: string;
   modelName: string;
+  photo: string | null;
   carriers: CarrierId[];
   storage: string[];
   kind: "phone" | "tablet";
 }
 
-export function VariantPicker({ category, modelSlug, modelName, carriers, storage, kind }: Props) {
+export function VariantPicker({ category, modelSlug, modelName, photo, carriers, storage, kind }: Props) {
   const router = useRouter();
   const [carrier, setCarrier] = useState<CarrierId | null>(null);
   const [size, setSize] = useState<string | null>(null);
@@ -111,6 +112,7 @@ export function VariantPicker({ category, modelSlug, modelName, carriers, storag
 
       <QuoteSummary
         category={category}
+        photo={photo}
         title={modelName}
         rows={[
           { label: carrierTitle, value: carrier ? CARRIER_LABELS[carrier] : null },

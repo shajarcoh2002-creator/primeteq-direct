@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCategory, groupLabel, modelsIn } from "@/data/catalog";
 import { getOverrides, getSettings } from "@/lib/db";
+import { getDevicePhotos } from "@/lib/photos";
 import { quoteVariant } from "@/lib/pricing";
 import { HeroTeaser } from "@/components/DeviceArt";
 import { FlowBar } from "@/components/FlowBar";
@@ -20,12 +21,13 @@ export default async function CategoryPage({ params }: PageProps<"/sell/[categor
   const category = getCategory((await params).category);
   if (!category) notFound();
 
-  const [settings, overrides] = await Promise.all([getSettings(), getOverrides()]);
+  const [settings, overrides, photos] = await Promise.all([getSettings(), getOverrides(), getDevicePhotos()]);
   const best = category.carriers.includes("unlocked") ? "unlocked" : "cellular";
   const models = modelsIn(category.id).map((m) => ({
     slug: m.slug,
     name: m.name,
     group: groupLabel(m),
+    photo: photos[m.slug] ?? null,
     storage: m.storage.map((s) => s.label),
     upTo: Math.max(...m.storage.map((s) => quoteVariant(m, s, best, settings, overrides).offers.flawless)),
   }));

@@ -36,6 +36,7 @@ interface Props {
   category: CategoryId;
   modelSlug: string;
   modelName: string;
+  photo: string | null;
   storage: string;
   carrierLabel: string;
   carrierTitle: string;
@@ -72,7 +73,7 @@ function Question({
 }
 
 export function Questionnaire(props: Props) {
-  const { variant, offers, kind, category, modelSlug, modelName, storage, carrierLabel, carrierTitle } = props;
+  const { variant, offers, kind, category, modelSlug, modelName, photo, storage, carrierLabel, carrierTitle } = props;
   const router = useRouter();
   const [a, setA] = useState<Partial<Answers>>({});
   const [tried, setTried] = useState(false);
@@ -213,6 +214,7 @@ export function Questionnaire(props: Props) {
 
       <QuoteSummary
         category={category}
+        photo={photo}
         title={modelName}
         rows={[
           { label: carrierTitle, value: carrierLabel },

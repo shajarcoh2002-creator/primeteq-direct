@@ -6,6 +6,7 @@ import { quoteById } from "@/lib/db";
 import { CONDITION_LABELS } from "@/lib/pricing";
 import { parseAnswers } from "@/lib/quote-params";
 import { FlowBar } from "@/components/FlowBar";
+import { getDevicePhoto } from "@/lib/photos";
 import { QuoteSummary } from "@/components/QuoteSummary";
 import { CheckoutForm } from "./CheckoutForm";
 
@@ -20,6 +21,7 @@ export default async function CheckoutPage({ searchParams }: PageProps<"/checkou
   if (!data || !parsed) notFound();
 
   const offer = data.quote.offers[parsed.condition];
+  const photo = await getDevicePhoto(data.model.slug);
   const hidden = { v: get("v")!, p: get("p") ?? "", f: get("f") ?? "", n: get("n") ?? "", k: get("k") ?? "" };
   const carrierTitle = data.category.kind === "tablet" ? "Connectivity" : "Carrier";
 
@@ -41,6 +43,7 @@ export default async function CheckoutPage({ searchParams }: PageProps<"/checkou
           </div>
           <QuoteSummary
             category={data.category.id}
+            photo={photo}
             title={data.model.name}
             rows={[
               { label: carrierTitle, value: CARRIER_LABELS[data.carrier] },

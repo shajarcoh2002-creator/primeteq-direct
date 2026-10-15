@@ -43,3 +43,6 @@ next-env.d.ts
 
 # local data (orders, settings)
 /data/
+
+# raw product photos (processed copies go to public/devices)
+/photos-raw/

@@ -1,5 +1,6 @@
 import { CATEGORIES, MODELS } from "@/data/catalog";
 import { getOverrides, getSettings } from "@/lib/db";
+import { getDevicePhotos } from "@/lib/photos";
 import { quoteVariant, resaleKey } from "@/lib/pricing";
 import { importResaleCsv, setResale } from "../../actions";
 
@@ -7,8 +8,10 @@ export default async function CatalogPage({ searchParams }: PageProps<"/admin/ca
   const sp = await searchParams;
   const cat = typeof sp.cat === "string" ? sp.cat : "iphone";
   const imported = typeof sp.imported === "string" ? sp.imported : null;
-  const [settings, overrides] = await Promise.all([getSettings(), getOverrides()]);
+  const [settings, overrides, photos] = await Promise.all([getSettings(), getOverrides(), getDevicePhotos()]);
   const models = MODELS.filter((m) => m.category === cat);
+  const withPhoto = MODELS.filter((m) => photos[m.slug]).length;
+  const missingHere = models.filter((m) => !photos[m.slug]).map((m) => m.slug);
   const best = cat === "ipad" ? "wifi" : "unlocked";
 
   return (
@@ -20,6 +23,28 @@ export default async function CatalogPage({ searchParams }: PageProps<"/admin/ca
           pagan a ti por ese equipo en buen estado), reemplaza la curva de depreciación para ese modelo. Déjalo vacío para usar la curva.
         </p>
       </div>
+
+      <section className="rounded-2xl border border-line bg-white p-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="font-bold">Fotos de producto</h2>
+          <p className="text-sm font-semibold">
+            {withPhoto} de {MODELS.length} modelos con foto real
+          </p>
+        </div>
+        <p className="mt-1 text-sm text-muted">
+          Pon la foto original en la carpeta <code>photos-raw/</code> con el nombre exacto del modelo (ej. <code>iphone-17-pro.jpg</code>) y
+          ejecuta <code>npm run photos</code>: la recorta, la centra en 1200×1200 con fondo blanco y la publica en <code>public/devices/</code>.
+          Los modelos sin foto muestran la ilustración.
+        </p>
+        {missingHere.length > 0 && (
+          <details className="mt-3 text-sm">
+            <summary className="cursor-pointer font-semibold text-brand">Faltan {missingHere.length} en esta categoría — ver nombres de archivo</summary>
+            <ul className="mt-2 columns-1 gap-6 font-mono text-xs sm:columns-2 lg:columns-3">
+              {missingHere.map((slug) => <li key={slug}>{slug}.jpg</li>)}
+            </ul>
+          </details>
+        )}
+      </section>
 
       {imported && <p className="rounded-lg bg-cash-soft p-3 text-sm font-medium text-cash">{imported} precios importados.</p>}
 
@@ -33,6 +58,7 @@ export default async function CatalogPage({ searchParams }: PageProps<"/admin/ca
         <table className="w-full min-w-[900px] text-left text-sm">
           <thead className="border-b border-line text-xs uppercase tracking-wide text-muted">
             <tr>
+              <th className="p-3">Foto</th>
               <th className="p-3">Modelo</th>
               <th className="p-3">Lanzamiento</th>
               <th className="p-3 text-right">Precio nuevo</th>
@@ -50,6 +76,15 @@ export default async function CatalogPage({ searchParams }: PageProps<"/admin/ca
                 const q = quoteVariant(m, s, best, settings, overrides);
                 return (
                   <tr key={`${m.slug}-${s.label}`} className={i === 0 ? "border-t-2 border-line" : ""}>
+                    <td className="p-3">
+                      {i === 0 &&
+                        (photos[m.slug] ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={photos[m.slug]} alt="" className="h-10 w-10 rounded object-contain" />
+                        ) : (
+                          <span className="text-xs font-semibold text-amber-700">Falta</span>
+                        ))}
+                    </td>
                     <td className="p-3">
                       <span className="font-semibold">{m.name}</span> {s.label}
                       {m.verify && <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800">verificar datos</span>}

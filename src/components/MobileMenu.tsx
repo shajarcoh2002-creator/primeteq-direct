@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Menu, X } from "lucide-react";
 import { CATEGORIES } from "@/data/catalog";
+import { MAIN_NAV, useSection } from "./MainNav";
 
 interface NavLink {
   label: string;
@@ -13,14 +14,9 @@ interface NavLink {
   placeholder?: boolean;
 }
 
-export function MobileMenu({
-  main,
-  utility,
-}: {
-  main: NavLink[];
-  utility: NavLink[];
-}) {
+export function MobileMenu({ utility }: { utility: NavLink[] }) {
   const [open, setOpen] = useState(false);
+  const section = useSection();
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -66,20 +62,22 @@ export function MobileMenu({
               }
             >
               <div className="grid grid-cols-3 gap-2">
-                {main.map((l) => (
-                  <Link
-                    key={l.label}
-                    href={l.href}
-                    aria-current={l.current ? "page" : undefined}
-                    className={`rounded-xl border py-3 text-center text-sm font-bold uppercase tracking-[0.08em] ${
-                      l.current
-                        ? "border-brand bg-brand-soft text-brand"
-                        : "border-line text-ink"
-                    }`}
-                  >
-                    {l.label}
-                  </Link>
-                ))}
+                {MAIN_NAV.map((l) => {
+                  const current = l.label === section;
+                  return (
+                    <Link
+                      key={l.label}
+                      href={l.href}
+                      aria-current={current ? "page" : undefined}
+                      className={`flex flex-col items-center rounded-xl border py-3 text-center text-sm font-bold uppercase tracking-[0.08em] ${
+                        current ? "border-brand bg-brand-soft text-brand" : "border-line text-ink"
+                      }`}
+                    >
+                      {l.label}
+                      {l.soon && <span className="mt-0.5 text-[10px] font-semibold normal-case tracking-normal text-muted">Coming soon</span>}
+                    </Link>
+                  );
+                })}
               </div>
               <p className="eyebrow mt-8">Sell a device</p>
               <ul className="mt-3 divide-y divide-line rounded-2xl border border-line">

@@ -4,6 +4,7 @@ import { CARRIER_LABELS, parseVariantId } from "@/data/catalog";
 import { STATUS_LABELS, getOrder } from "@/lib/db";
 import { CONDITION_LABELS } from "@/lib/pricing";
 import { FlowBar } from "@/components/FlowBar";
+import { getDevicePhoto } from "@/lib/photos";
 import { QuoteSummary } from "@/components/QuoteSummary";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +26,7 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
   const variant = parseVariantId(order.item.variantId);
   const category = variant?.category.id ?? "iphone";
   const price = order.finalPrice ?? order.item.quotedPrice;
+  const photo = variant ? await getDevicePhoto(variant.model.slug) : null;
 
   return (
     <>
@@ -89,6 +91,7 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
 
           <QuoteSummary
             category={category}
+            photo={photo}
             title={order.item.modelName}
             rows={[
               { label: variant?.category.kind === "tablet" ? "Connectivity" : "Carrier", value: CARRIER_LABELS[order.item.carrier] },
