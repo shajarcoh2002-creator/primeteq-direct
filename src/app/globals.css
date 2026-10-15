@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0b1733;
+  --color-ink-2: #1c2a4d;
+  --color-brand: #1f5eff;
+  --color-brand-dark: #1446c7;
+  --color-brand-soft: #e9efff;
+  --color-cash: #0f9d6b;
+  --color-cash-soft: #e5f6ef;
+  --color-line: #e3e7ef;
+  --color-muted: #5b6680;
+  --color-paper: #f6f8fc;
+
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 1160px;
+    margin-inline: auto;
+    padding-inline: 16px;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 24px;
+    }
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+  }
+
+  .btn-primary {
+    background: var(--color-brand);
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: var(--color-brand-dark);
+  }
+  .btn-primary:disabled {
+    background: #b9c6e6;
+    cursor: not-allowed;
+  }
+
+  .btn-outline {
+    border: 1.5px solid var(--color-line);
+    background: #fff;
+    color: var(--color-ink);
+  }
+  .btn-outline:hover {
+    border-color: var(--color-brand);
+    color: var(--color-brand);
+  }
+
+  .choice {
+    border: 1.5px solid var(--color-line);
+    background: #fff;
+    border-radius: 12px;
+    padding: 0.65rem 1.25rem;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .choice:hover {
+    border-color: var(--color-brand);
+  }
+  .choice[data-active="true"] {
+    border-color: var(--color-brand);
+    background: var(--color-brand);
+    color: #fff;
+  }
+
+  .field {
+    width: 100%;
+    border: 1.5px solid var(--color-line);
+    border-radius: 10px;
+    padding: 0.65rem 0.85rem;
+    background: #fff;
+    font-size: 0.95rem;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px var(--color-brand-soft);
+  }
+
+  .label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    color: var(--color-ink-2);
+  }
+}
