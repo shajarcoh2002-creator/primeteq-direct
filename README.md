@@ -35,9 +35,30 @@ Los valores por defecto están calibrados contra una cotización real de Gazelle
 Las curvas y ajustes por operador son estimados: calíbralos con más modelos.
 Los modelos marcados “verificar datos” tienen precio/fecha de lanzamiento estimados.
 
+## Datos
+
+- **Con `DATABASE_URL`** (producción): todo se guarda en Postgres. Las tablas (`orders`, `app_kv`) se crean solas la primera vez.
+- **Sin `DATABASE_URL`** (tu computadora): se guarda en `data/*.json`, como antes.
+
+## Publicar en Vercel
+
+1. Sube el proyecto a un repositorio privado de GitHub.
+2. En [vercel.com](https://vercel.com) → **Add New → Project** → importa el repositorio (detecta Next.js solo).
+3. En el proyecto de Vercel → **Storage → Create Database → Neon (Postgres)** → conéctala al proyecto.
+   Esto agrega `DATABASE_URL` automáticamente. (Otra opción: crear la base en neon.tech o supabase.com y pegar la URL.)
+4. **Settings → Environment Variables** → agrega `ADMIN_PASSWORD` con una contraseña larga y nueva.
+5. **Deploy**. Luego, en **Settings → Domains**, agrega `primeteqdirect.com` y copia los registros DNS que indica
+   Vercel en el lugar donde compraste el dominio.
+
+Cada `git push` a la rama principal vuelve a publicar el sitio.
+
+## Fotos de producto
+
+Fotos originales en `photos-raw/<modelo>.jpg` → `npm run photos` → `public/devices/<modelo>.webp`.
+Hay que hacer commit de `public/devices/` (y `src/data/photos.json`) para que aparezcan en el sitio publicado.
+
 ## Pendiente antes de lanzar
 
-- Base de datos real (hoy las órdenes y ajustes se guardan en `data/*.json`, sirve para un solo servidor).
 - Etiquetas de envío prepagadas (EasyPost / Shippo) y emails automáticos.
 - Pagos (PayPal Payouts, Zelle, cheques) y verificación de IMEI / lista negra.
 - Revisión legal de términos y licencia de comprador de artículos usados.

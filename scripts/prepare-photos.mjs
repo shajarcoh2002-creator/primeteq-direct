@@ -11,6 +11,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import sharp from "sharp";
+import { writePhotoManifest } from "./photo-manifest.mjs";
 
 const ROOT = process.cwd();
 const RAW = path.join(ROOT, "photos-raw");
@@ -59,7 +60,8 @@ async function main() {
     console.log(`✓ ${file} → public/devices/${slug}.webp`);
   }
 
-  console.log(`\n${ok} photo(s) ready.`);
+  const total = await writePhotoManifest();
+  console.log(`\n${ok} photo(s) ready. ${total} model(s) now have a photo.`);
   if (skipped.length) {
     console.log(`Skipped (name doesn't match a model): ${skipped.join(", ")}`);
   }

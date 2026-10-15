@@ -1,7 +1,7 @@
 import { randomBytes } from "crypto";
 import type { CarrierId } from "@/data/catalog";
 import { parseVariantId } from "@/data/catalog";
-import { readJson, writeJson } from "./store";
+import { findOrder, getDoc, listOrders, setDoc, upsertOrder } from "./store";
 import {
   type Answers,
   type Condition,
@@ -14,19 +14,19 @@ import {
 // ---------- Pricing data ----------
 
 export async function getSettings(): Promise<PricingSettings> {
-  return mergeSettings(await readJson<Partial<PricingSettings> | null>("settings.json", null));
+  return mergeSettings(await getDoc<Partial<PricingSettings> | null>("settings", null));
 }
 
 export async function saveSettings(settings: PricingSettings) {
-  await writeJson("settings.json", settings);
+  await setDoc("settings", settings);
 }
 
 export async function getOverrides(): Promise<ResaleOverrides> {
-  return readJson<ResaleOverrides>("resale-overrides.json", {});
+  return getDoc<ResaleOverrides>("resale-overrides", {});
 }
 
 export async function saveOverrides(overrides: ResaleOverrides) {
-  await writeJson("resale-overrides.json", overrides);
+  await setDoc("resale-overrides", overrides);
 }
 
 export async function quoteById(variant: string, now = new Date()) {
@@ -55,11 +55,11 @@ const SEED_REFS: CalibrationRef[] = [
 ];
 
 export async function getCalibrationRefs() {
-  return readJson<CalibrationRef[]>("calibration.json", SEED_REFS);
+  return getDoc<CalibrationRef[]>("calibration", SEED_REFS);
 }
 
 export async function saveCalibrationRefs(refs: CalibrationRef[]) {
-  await writeJson("calibration.json", refs);
+  await setDoc("calibration", refs);
 }
 
 // ---------- Orders ----------
@@ -109,20 +109,15 @@ export interface Order {
 }
 
 export async function getOrders() {
-  const orders = await readJson<Order[]>("orders.json", []);
-  return orders.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return listOrders<Order>();
 }
 
 export async function getOrder(id: string) {
-  return (await getOrders()).find((o) => o.id === id.toUpperCase()) ?? null;
+  return findOrder<Order>(id.trim().toUpperCase());
 }
 
 export async function saveOrder(order: Order) {
-  const orders = await readJson<Order[]>("orders.json", []);
-  const i = orders.findIndex((o) => o.id === order.id);
-  if (i >= 0) orders[i] = order;
-  else orders.push(order);
-  await writeJson("orders.json", orders);
+  await upsertOrder(order);
 }
 
 export function newOrderId() {
