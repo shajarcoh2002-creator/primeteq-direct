@@ -9,7 +9,12 @@ export function FlowBar({ category, current }: { category?: CategoryId; current:
   return (
     <div className="border-b border-line bg-white">
       <div className="container-page">
-        <nav aria-label="Device categories" className="-mx-4 flex gap-1 overflow-x-auto px-4 pt-3 [scrollbar-width:none] md:mx-0 md:px-0">
+        <nav
+          aria-label="Device categories"
+          className={`-mx-4 gap-1 overflow-x-auto px-4 pt-3 [mask-image:linear-gradient(to_right,black_80%,transparent)] [scrollbar-width:none] md:mx-0 md:flex md:px-0 md:[mask-image:none] ${
+            category ? "flex" : "hidden"
+          }`}
+        >
           {CATEGORIES.map((c) => {
             const active = c.id === category;
             return (

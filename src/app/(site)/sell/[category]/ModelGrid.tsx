@@ -47,26 +47,35 @@ export function ModelGrid({ category, categoryName, models }: { category: Catego
         </label>
       </div>
 
-      <div className="mt-10 space-y-10">
+      <div className="mt-8 space-y-7 sm:mt-10 sm:space-y-10">
         {groups.map(([group, items]) => (
           <div key={group}>
             <h3 className="flex items-center gap-4 text-sm font-bold uppercase tracking-[0.1em] text-muted">
               {group}
               <span className="h-px flex-1 bg-line" aria-hidden />
             </h3>
-            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {/* Mobile: compact list rows. sm+: cards. */}
+            <div className="mt-3 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white sm:mt-4 sm:grid sm:grid-cols-3 sm:gap-3 sm:divide-y-0 sm:overflow-visible sm:rounded-none sm:border-0 sm:bg-transparent lg:grid-cols-4 xl:grid-cols-5">
               {items.map((m) => (
                 <Link
                   key={m.slug}
                   href={`/sell/${category}/${m.slug}`}
-                  className="group flex min-h-44 flex-col rounded-[18px] border border-line bg-white p-4 transition hover:-translate-y-0.5 hover:border-brand hover:shadow-[var(--shadow-lift)] focus-visible:border-brand md:p-5"
+                  className="group flex items-center gap-3 px-3 py-2.5 transition active:bg-paper sm:min-h-44 sm:flex-col sm:items-stretch sm:gap-0 sm:rounded-[18px] sm:border sm:border-line sm:bg-white sm:p-4 sm:hover:-translate-y-0.5 sm:hover:border-brand sm:hover:shadow-[var(--shadow-lift)] md:p-5"
                 >
-                  <DevicePhoto category={category} photo={m.photo} alt={m.name} className="h-24 w-full md:h-28" sizes="(min-width: 1024px) 200px, 45vw" />
-                  <span className="font-display mt-4 text-[15px] font-bold leading-snug md:text-base">{m.name}</span>
-                  <span className="mt-1 text-xs text-muted">{m.storage.join(" · ")}</span>
-                  <span className="mt-auto flex items-center justify-between pt-3 text-xs font-semibold">
-                    <span className="text-ink-2">Up to ${m.upTo.toLocaleString("en-US")}</span>
-                    <ArrowRight className="h-4 w-4 text-brand opacity-0 transition group-hover:opacity-100" />
+                  <DevicePhoto category={category} photo={m.photo} alt={m.name} className="h-14 w-10 sm:h-24 sm:w-full md:h-28" sizes="(min-width: 1024px) 200px, (min-width: 640px) 30vw, 40px" />
+                  <span className="min-w-0 flex-1 sm:flex sm:flex-1 sm:flex-col">
+                    <span className="font-display block text-[15px] font-bold leading-snug sm:mt-4 md:text-base">{m.name}</span>
+                    <span className="mt-0.5 block truncate text-xs text-muted sm:mt-1 sm:whitespace-normal">{m.storage.join(" · ")}</span>
+                    <span className="mt-auto hidden items-center justify-between pt-3 text-xs font-semibold sm:flex">
+                      <span className="text-ink-2">Up to ${m.upTo.toLocaleString("en-US")}</span>
+                      <ArrowRight className="h-4 w-4 text-brand opacity-0 transition group-hover:opacity-100" />
+                    </span>
+                  </span>
+                  <span className="flex shrink-0 items-center gap-1.5 text-right text-xs font-semibold text-ink-2 sm:hidden">
+                    <span>
+                      <span className="block text-[10px] font-medium uppercase tracking-wide text-muted">Up to</span>${m.upTo.toLocaleString("en-US")}
+                    </span>
+                    <ArrowRight className="h-4 w-4 text-brand" />
                   </span>
                 </Link>
               ))}

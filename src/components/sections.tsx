@@ -11,26 +11,31 @@ export function HowItWorks() {
   ];
   return (
     <section id="how-it-works" className="scroll-mt-28 bg-white">
-      <div className="container-page py-16 md:py-24">
+      <div className="container-page py-12 md:py-24">
         <div className="max-w-2xl">
           <p className="eyebrow">How it works</p>
           <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">Four steps, start to finish.</h2>
         </div>
-        <ol className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="mt-8 grid gap-6 sm:mt-12 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4">
           {steps.map((s, i) => (
-            <li key={s.title} className="relative">
-              <div className="flex items-center gap-3">
+            <li key={s.title} className="flex gap-4 sm:block">
+              <div className="flex shrink-0 items-center gap-3">
                 <span className="grid h-11 w-11 place-items-center rounded-xl border border-line bg-white text-brand">
                   <s.icon className="h-5 w-5" strokeWidth={1.75} />
                 </span>
-                <span className="font-display text-sm font-bold text-muted">0{i + 1}</span>
+                <span className="font-display hidden text-sm font-bold text-muted sm:inline">0{i + 1}</span>
               </div>
-              <h3 className="mt-5 text-lg font-bold">{s.title}</h3>
-              <p className="mt-2 text-[15px] text-muted">{s.body}</p>
+              <div>
+                <h3 className="text-lg font-bold sm:mt-5">
+                  <span className="mr-1.5 text-muted sm:hidden">{i + 1}.</span>
+                  {s.title}
+                </h3>
+                <p className="mt-1 text-[15px] text-muted sm:mt-2">{s.body}</p>
+              </div>
             </li>
           ))}
         </ol>
-        <p className="mt-10 text-sm text-muted">
+        <p className="mt-8 text-sm text-muted sm:mt-10">
           Shipping and payment details: <span className="placeholder-note">Policy to be confirmed</span>
         </p>
       </div>
@@ -46,16 +51,16 @@ export function TrustGrid() {
   ];
   return (
     <section className="bg-paper">
-      <div className="container-page py-16 md:py-24">
+      <div className="container-page py-12 md:py-24">
         <div className="max-w-2xl">
           <p className="eyebrow">Why Prime Teq</p>
           <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">Selling tech, made simple.</h2>
         </div>
-        <div className="mt-12 grid gap-4 md:grid-cols-3">
+        <div className="mt-8 grid gap-3 sm:mt-12 sm:gap-4 md:grid-cols-3">
           {items.map((it) => (
-            <div key={it.title} className="card p-6">
+            <div key={it.title} className="card p-5 sm:p-6">
               <it.icon className="h-6 w-6 text-brand" strokeWidth={1.75} />
-              <h3 className="mt-5 text-lg font-bold">{it.title}</h3>
+              <h3 className="mt-3 text-lg font-bold sm:mt-5">{it.title}</h3>
               <p className="mt-2 text-[15px] text-muted">{it.body}</p>
             </div>
           ))}
@@ -75,7 +80,7 @@ export function Faq({ items, title = "Questions, answered." }: { items: FaqItem[
   return (
     <section id="faq" className="scroll-mt-28 bg-white">
       <HashOpener />
-      <div className="container-page grid gap-10 py-16 md:py-24 lg:grid-cols-[1fr_1.6fr]">
+      <div className="container-page grid gap-8 py-12 md:gap-10 md:py-24 lg:grid-cols-[1fr_1.6fr]">
         <div>
           <p className="eyebrow">FAQ</p>
           <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">{title}</h2>

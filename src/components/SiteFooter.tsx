@@ -25,8 +25,8 @@ const COLUMNS = [
 export function SiteFooter() {
   return (
     <footer className="border-t border-line bg-white">
-      <div className="container-page grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
-        <div className="space-y-4">
+      <div className="container-page grid grid-cols-2 gap-x-6 gap-y-9 py-10 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-10 md:py-14">
+        <div className="col-span-2 space-y-4 md:col-span-1">
           <Logo className="h-7 w-auto" />
           <p className="max-w-xs text-sm text-muted">Buy, sell, trade and upgrade your tech.</p>
           <div className="space-y-1 text-sm">
@@ -42,7 +42,7 @@ export function SiteFooter() {
         {COLUMNS.map((col) => (
           <div key={col.title}>
             <h3 className="text-sm font-bold text-ink">{col.title}</h3>
-            <ul className="mt-4 space-y-2.5 text-sm">
+            <ul className="mt-3 space-y-2 text-sm md:mt-4 md:space-y-2.5">
               {col.links.map((l) => (
                 <li key={l.label}>
                   <Link href={l.href} className="text-muted hover:text-brand">
