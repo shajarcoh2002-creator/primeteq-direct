@@ -74,15 +74,16 @@ export type OrderStatus =
   | "returned"
   | "cancelled";
 
-export const STATUS_LABELS: Record<OrderStatus, { en: string; es: string }> = {
-  awaiting_device: { en: "Waiting for your device", es: "Esperando equipo" },
-  received: { en: "Device received", es: "Recibido" },
-  inspecting: { en: "Inspecting", es: "En inspección" },
-  countered: { en: "Revised offer sent", es: "Contraoferta enviada" },
-  approved: { en: "Approved — payment processing", es: "Aprobado (por pagar)" },
-  paid: { en: "Paid", es: "Pagado" },
-  returned: { en: "Returned to you", es: "Devuelto" },
-  cancelled: { en: "Cancelled", es: "Cancelado" },
+/** `en` = what the customer sees; `admin` = the internal label in the admin panel. */
+export const STATUS_LABELS: Record<OrderStatus, { en: string; admin: string }> = {
+  awaiting_device: { en: "Waiting for your device", admin: "Awaiting device" },
+  received: { en: "Device received", admin: "Received" },
+  inspecting: { en: "Inspecting", admin: "Inspecting" },
+  countered: { en: "Revised offer sent", admin: "Counter-offer sent" },
+  approved: { en: "Approved — payment processing", admin: "Approved (to pay)" },
+  paid: { en: "Paid", admin: "Paid" },
+  returned: { en: "Returned to you", admin: "Returned" },
+  cancelled: { en: "Cancelled", admin: "Cancelled" },
 };
 
 export type PayoutMethod = "paypal" | "zelle" | "check";

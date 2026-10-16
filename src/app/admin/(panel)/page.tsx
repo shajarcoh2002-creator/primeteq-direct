@@ -14,16 +14,16 @@ export default async function OrdersPage({ searchParams }: PageProps<"/admin">) 
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Órdenes</h1>
-          <p className="text-sm text-muted">{open.length} abiertas · ${openValue.toLocaleString("en-US")} comprometidos</p>
+          <h1 className="text-2xl font-bold">Orders</h1>
+          <p className="text-sm text-muted">{open.length} open · ${openValue.toLocaleString("en-US")} committed</p>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-2 text-sm">
-        <Link href="/admin" className="choice !py-1.5" data-active={!filter}>Todas ({all.length})</Link>
+        <Link href="/admin" className="choice !py-1.5" data-active={!filter}>All ({all.length})</Link>
         {(Object.keys(STATUS_LABELS) as OrderStatus[]).map((s) => (
           <Link key={s} href={`/admin?status=${s}`} className="choice !py-1.5" data-active={filter === s}>
-            {STATUS_LABELS[s].es} ({counts[s] ?? 0})
+            {STATUS_LABELS[s].admin} ({counts[s] ?? 0})
           </Link>
         ))}
       </div>
@@ -32,12 +32,12 @@ export default async function OrdersPage({ searchParams }: PageProps<"/admin">) 
         <table className="w-full min-w-[760px] text-left text-sm">
           <thead className="border-b border-line text-xs uppercase tracking-wide text-muted">
             <tr>
-              <th className="p-3">Orden</th>
-              <th className="p-3">Fecha</th>
-              <th className="p-3">Cliente</th>
-              <th className="p-3">Equipo</th>
-              <th className="p-3">Oferta</th>
-              <th className="p-3">Estado</th>
+              <th className="p-3">Order</th>
+              <th className="p-3">Date</th>
+              <th className="p-3">Customer</th>
+              <th className="p-3">Device</th>
+              <th className="p-3">Offer</th>
+              <th className="p-3">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
@@ -46,15 +46,15 @@ export default async function OrdersPage({ searchParams }: PageProps<"/admin">) 
                 <td className="p-3 font-mono font-semibold">
                   <Link href={`/admin/orders/${o.id}`} className="text-brand hover:underline">{o.id}</Link>
                 </td>
-                <td className="p-3 text-muted">{new Date(o.createdAt).toLocaleDateString("es")}</td>
+                <td className="p-3 text-muted">{new Date(o.createdAt).toLocaleDateString("en-US")}</td>
                 <td className="p-3">{o.customer.name}<br /><span className="text-muted">{o.customer.email}</span></td>
                 <td className="p-3">{o.item.modelName} {o.item.storage}<br /><span className="text-muted">{CARRIER_LABELS[o.item.carrier]} · {o.item.condition}</span></td>
                 <td className="p-3 font-semibold">${(o.finalPrice ?? o.item.quotedPrice).toLocaleString("en-US")}</td>
-                <td className="p-3">{STATUS_LABELS[o.status].es}</td>
+                <td className="p-3">{STATUS_LABELS[o.status].admin}</td>
               </tr>
             ))}
             {orders.length === 0 && (
-              <tr><td colSpan={6} className="p-8 text-center text-muted">No hay órdenes todavía.</td></tr>
+              <tr><td colSpan={6} className="p-8 text-center text-muted">No orders yet.</td></tr>
             )}
           </tbody>
         </table>

@@ -17,28 +17,28 @@ export default async function CatalogPage({ searchParams }: PageProps<"/admin/ca
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Catálogo y precios</h1>
+        <h1 className="text-2xl font-bold">Catalog & prices</h1>
         <p className="mt-1 max-w-3xl text-sm text-muted">
-          Ofertas actuales por modelo ({best === "wifi" ? "Wi-Fi" : "desbloqueado"}). Si escribes un <strong>precio de reventa manual</strong> (lo que te
-          pagan a ti por ese equipo en buen estado), reemplaza la curva de depreciación para ese modelo. Déjalo vacío para usar la curva.
+          Current offers per model ({best === "wifi" ? "Wi-Fi" : "unlocked"}). Entering a <strong>manual resale price</strong> (what you get paid for that
+          device in good condition) replaces the depreciation curve for that model. Leave it empty to use the curve.
         </p>
       </div>
 
       <section className="rounded-2xl border border-line bg-white p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="font-bold">Fotos de producto</h2>
+          <h2 className="font-bold">Product photos</h2>
           <p className="text-sm font-semibold">
-            {withPhoto} de {MODELS.length} modelos con foto real
+            {withPhoto} of {MODELS.length} models have a real photo
           </p>
         </div>
         <p className="mt-1 text-sm text-muted">
-          Pon la foto original en la carpeta <code>photos-raw/</code> con el nombre exacto del modelo (ej. <code>iphone-17-pro.jpg</code>) y
-          ejecuta <code>npm run photos</code>: la recorta, la centra en 1200×1200 con fondo blanco y la publica en <code>public/devices/</code>.
-          Los modelos sin foto muestran la ilustración.
+          Put the original photo in the <code>photos-raw/</code> folder named exactly after the model (e.g. <code>iphone-17-pro.jpg</code>) and run{" "}
+          <code>npm run photos</code>: it crops it, centers it on a 1200×1200 white canvas and publishes it to <code>public/devices/</code>. Models
+          without a photo show the illustration.
         </p>
         {missingHere.length > 0 && (
           <details className="mt-3 text-sm">
-            <summary className="cursor-pointer font-semibold text-brand">Faltan {missingHere.length} en esta categoría — ver nombres de archivo</summary>
+            <summary className="cursor-pointer font-semibold text-brand">{missingHere.length} missing in this category — see file names</summary>
             <ul className="mt-2 columns-1 gap-6 font-mono text-xs sm:columns-2 lg:columns-3">
               {missingHere.map((slug) => <li key={slug}>{slug}.jpg</li>)}
             </ul>
@@ -46,7 +46,7 @@ export default async function CatalogPage({ searchParams }: PageProps<"/admin/ca
         )}
       </section>
 
-      {imported && <p className="rounded-lg bg-cash-soft p-3 text-sm font-medium text-cash">{imported} precios importados.</p>}
+      {imported && <p className="rounded-lg bg-cash-soft p-3 text-sm font-medium text-cash">{imported} prices imported.</p>}
 
       <div className="flex flex-wrap gap-2 text-sm">
         {CATEGORIES.map((c) => (
@@ -58,16 +58,16 @@ export default async function CatalogPage({ searchParams }: PageProps<"/admin/ca
         <table className="w-full min-w-[900px] text-left text-sm">
           <thead className="border-b border-line text-xs uppercase tracking-wide text-muted">
             <tr>
-              <th className="p-3">Foto</th>
-              <th className="p-3">Modelo</th>
-              <th className="p-3">Lanzamiento</th>
-              <th className="p-3 text-right">Precio nuevo</th>
-              <th className="p-3 text-right">Reventa estimada</th>
-              <th className="p-3 text-right">Bueno</th>
-              <th className="p-3 text-right">Rayado</th>
-              <th className="p-3 text-right">Dañado</th>
-              <th className="p-3 text-right">Roto</th>
-              <th className="p-3">Reventa manual</th>
+              <th className="p-3">Photo</th>
+              <th className="p-3">Model</th>
+              <th className="p-3">Released</th>
+              <th className="p-3 text-right">Launch price</th>
+              <th className="p-3 text-right">Est. resale</th>
+              <th className="p-3 text-right">Good</th>
+              <th className="p-3 text-right">Scratched</th>
+              <th className="p-3 text-right">Damaged</th>
+              <th className="p-3 text-right">Broken</th>
+              <th className="p-3">Manual resale</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
@@ -82,18 +82,18 @@ export default async function CatalogPage({ searchParams }: PageProps<"/admin/ca
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={photos[m.slug]} alt="" className="h-10 w-10 rounded object-contain" />
                         ) : (
-                          <span className="text-xs font-semibold text-amber-700">Falta</span>
+                          <span className="text-xs font-semibold text-amber-700">Missing</span>
                         ))}
                     </td>
                     <td className="p-3">
                       <span className="font-semibold">{m.name}</span> {s.label}
-                      {m.verify && <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800">verificar datos</span>}
+                      {m.verify && <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-xs font-semibold text-amber-800">verify data</span>}
                     </td>
                     <td className="p-3 text-muted">{m.released} · {q.resale.ageMonths.toFixed(0)}m</td>
                     <td className="p-3 text-right text-muted">${s.msrp}</td>
                     <td className="p-3 text-right">
                       ${Math.round(q.resale.resale)}
-                      <span className="block text-xs text-muted">{q.resale.source === "manual" ? "manual" : `curva ${q.resale.curvePct.toFixed(0)}%`}</span>
+                      <span className="block text-xs text-muted">{q.resale.source === "manual" ? "manual" : `curve ${q.resale.curvePct.toFixed(0)}%`}</span>
                     </td>
                     <td className="p-3 text-right font-bold text-cash">${q.offers.good}</td>
                     <td className="p-3 text-right">${q.offers.fair}</td>
@@ -116,14 +116,14 @@ export default async function CatalogPage({ searchParams }: PageProps<"/admin/ca
       </div>
 
       <section className="rounded-2xl border border-line bg-white p-5">
-        <h2 className="font-bold">Importar precios de reventa (CSV)</h2>
+        <h2 className="font-bold">Import resale prices (CSV)</h2>
         <p className="mt-1 text-sm text-muted">
-          Una línea por equipo: <code>modelo,capacidad,precio</code>. Ej: <code>iphone-17-pro,256GB,950</code>. Útil para cargar la lista semanal de tu
-          mayorista.
+          One line per device: <code>model,storage,price</code>. E.g. <code>iphone-17-pro,256GB,950</code>. Handy for loading your wholesaler&apos;s
+          weekly price list.
         </p>
         <form action={importResaleCsv} className="mt-3 space-y-3">
           <textarea name="csv" rows={5} className="field font-mono text-xs" placeholder={"iphone-17-pro,256GB,950\ngalaxy-s25-ultra,256GB,720"} />
-          <button className="btn btn-primary">Importar</button>
+          <button className="btn btn-primary">Import</button>
         </form>
       </section>
     </div>

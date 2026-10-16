@@ -7,10 +7,10 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Admin" };
 
 const NAV = [
-  { href: "/admin", label: "Órdenes" },
-  { href: "/admin/pricing", label: "Fórmula de precios" },
-  { href: "/admin/catalog", label: "Catálogo y precios" },
-  { href: "/admin/calibration", label: "Calibración" },
+  { href: "/admin", label: "Orders" },
+  { href: "/admin/pricing", label: "Pricing formula" },
+  { href: "/admin/catalog", label: "Catalog & prices" },
+  { href: "/admin/calibration", label: "Calibration" },
 ];
 
 async function signOut() {
@@ -33,9 +33,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             {NAV.map((n) => (
               <Link key={n.href} href={n.href} className="rounded-lg px-3 py-1.5 text-ink-2 hover:bg-paper">{n.label}</Link>
             ))}
-            <Link href="/" target="_blank" className="rounded-lg px-3 py-1.5 text-muted hover:bg-paper">Ver sitio ↗</Link>
+            <Link href="/" target="_blank" className="rounded-lg px-3 py-1.5 text-muted hover:bg-paper">View site ↗</Link>
             <form action={signOut}>
-              <button className="rounded-lg px-3 py-1.5 text-muted hover:bg-paper">Salir</button>
+              <button className="rounded-lg px-3 py-1.5 text-muted hover:bg-paper">Sign out</button>
             </form>
           </nav>
         </div>

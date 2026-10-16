@@ -16,13 +16,13 @@ export default async function LoginPage({ searchParams }: PageProps<"/admin/logi
     <main className="grid min-h-screen place-items-center bg-paper p-4">
       <form action={submit} className="w-full max-w-sm space-y-5 rounded-2xl border border-line bg-white p-8">
         <Logo />
-        <h1 className="text-xl font-bold">Panel de administración</h1>
+        <h1 className="text-xl font-bold">Admin panel</h1>
         <div>
-          <label className="label" htmlFor="password">Contraseña</label>
+          <label className="label" htmlFor="password">Password</label>
           <input id="password" name="password" type="password" className="field" autoFocus required />
         </div>
-        {error && <p className="text-sm font-medium text-red-700">Contraseña incorrecta.</p>}
-        <button className="btn btn-primary w-full">Entrar</button>
+        {error && <p className="text-sm font-medium text-red-700">Incorrect password.</p>}
+        <button className="btn btn-primary w-full">Sign in</button>
       </form>
     </main>
   );

@@ -28,11 +28,11 @@ export default async function CalibrationPage({ searchParams }: PageProps<"/admi
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Calibración contra la competencia</h1>
+        <h1 className="text-2xl font-bold">Calibration against competitors</h1>
         <p className="mt-1 max-w-3xl text-sm text-muted">
-          Para que tus ofertas queden parecidas a las de Gazelle: revisa a mano en gazelle.com unos 20–30 modelos populares (en condición
-          “Lightly used”), anota su precio aquí y presiona “Aplicar ajuste”. El sistema ajusta la calibración de esa marca para que en promedio
-          coincidan. Repítelo cada 1–2 semanas con algunos modelos para seguir los cambios del mercado.
+          To keep your offers close to Gazelle&apos;s: check 20–30 popular models by hand on gazelle.com (in “Lightly used” condition), enter their
+          price here and press “Apply adjustment”. The system tunes that brand&apos;s calibration so the offers match on average. Repeat every 1–2 weeks
+          with a few models to follow market changes.
         </p>
       </div>
 
@@ -42,23 +42,23 @@ export default async function CalibrationPage({ searchParams }: PageProps<"/admi
           return (
             <div key={k} className="rounded-2xl border border-line bg-white p-5">
               <p className="font-bold">{CURVE_LABELS[k]}</p>
-              <p className="text-sm text-muted">Calibración actual: {settings.calibrationPct[k]}%</p>
+              <p className="text-sm text-muted">Current calibration: {settings.calibrationPct[k]}%</p>
               {agg ? (
                 <>
-                  <p className="mt-3 text-sm">{agg.n} referencias</p>
+                  <p className="mt-3 text-sm">{agg.n} references</p>
                   <p className="text-sm">
-                    Diferencia promedio:{" "}
+                    Average difference:{" "}
                     <strong className={Math.abs(agg.sum / agg.n) < 3 ? "text-cash" : "text-amber-700"}>
                       {agg.sum / agg.n > 0 ? "+" : ""}{(agg.sum / agg.n).toFixed(1)}%
                     </strong>
                   </p>
                   <form action={applyCalibration} className="mt-3">
                     <input type="hidden" name="curve" value={k} />
-                    <button className="btn btn-outline !px-4 !py-1.5 text-sm">Aplicar ajuste</button>
+                    <button className="btn btn-outline !px-4 !py-1.5 text-sm">Apply adjustment</button>
                   </form>
                 </>
               ) : (
-                <p className="mt-3 text-sm text-muted">Sin referencias todavía.</p>
+                <p className="mt-3 text-sm text-muted">No references yet.</p>
               )}
             </div>
           );
@@ -66,11 +66,11 @@ export default async function CalibrationPage({ searchParams }: PageProps<"/admi
       </section>
 
       <section className="rounded-2xl border border-line bg-white p-5">
-        <h2 className="font-bold">Agregar precio de referencia</h2>
-        {error && <p className="mt-2 text-sm font-medium text-red-700">Revisa los datos: equipo, condición y precio son obligatorios.</p>}
+        <h2 className="font-bold">Add reference price</h2>
+        {error && <p className="mt-2 text-sm font-medium text-red-700">Check the data: device, condition and price are required.</p>}
         <form action={addCalibrationRef} className="mt-4 grid gap-3 lg:grid-cols-[1fr_200px_120px_120px_auto] lg:items-end">
           <div>
-            <label className="label" htmlFor="variantId">Equipo</label>
+            <label className="label" htmlFor="variantId">Device</label>
             <select id="variantId" name="variantId" className="field" required>
               {MODELS.map((m) => {
                 const cat = getCategory(m.category)!;
@@ -89,20 +89,20 @@ export default async function CalibrationPage({ searchParams }: PageProps<"/admi
             </select>
           </div>
           <div>
-            <label className="label" htmlFor="condition">Condición</label>
+            <label className="label" htmlFor="condition">Condition</label>
             <select id="condition" name="condition" defaultValue="good" className="field">
               {CONDITIONS.map((c) => <option key={c} value={c}>{CONDITION_LABELS[c]}</option>)}
             </select>
           </div>
           <div>
-            <label className="label" htmlFor="referencePrice">Precio (USD)</label>
+            <label className="label" htmlFor="referencePrice">Price (USD)</label>
             <input id="referencePrice" name="referencePrice" className="field" inputMode="decimal" required />
           </div>
           <div>
-            <label className="label" htmlFor="source">Fuente</label>
+            <label className="label" htmlFor="source">Source</label>
             <input id="source" name="source" defaultValue="Gazelle" className="field" />
           </div>
-          <button className="btn btn-primary">Agregar</button>
+          <button className="btn btn-primary">Add</button>
         </form>
       </section>
 
@@ -110,12 +110,12 @@ export default async function CalibrationPage({ searchParams }: PageProps<"/admi
         <table className="w-full min-w-[760px] text-left text-sm">
           <thead className="border-b border-line text-xs uppercase tracking-wide text-muted">
             <tr>
-              <th className="p-3">Equipo</th>
-              <th className="p-3">Condición</th>
-              <th className="p-3">Fuente / fecha</th>
-              <th className="p-3 text-right">Referencia</th>
-              <th className="p-3 text-right">Nuestra oferta</th>
-              <th className="p-3 text-right">Diferencia</th>
+              <th className="p-3">Device</th>
+              <th className="p-3">Condition</th>
+              <th className="p-3">Source / date</th>
+              <th className="p-3 text-right">Reference</th>
+              <th className="p-3 text-right">Our offer</th>
+              <th className="p-3 text-right">Difference</th>
               <th className="p-3" />
             </tr>
           </thead>
@@ -133,7 +133,7 @@ export default async function CalibrationPage({ searchParams }: PageProps<"/admi
                 <td className="p-3 text-right">
                   <form action={deleteCalibrationRef}>
                     <input type="hidden" name="id" value={r.id} />
-                    <button className="text-xs font-semibold text-muted hover:text-red-700">Borrar</button>
+                    <button className="text-xs font-semibold text-muted hover:text-red-700">Delete</button>
                   </form>
                 </td>
               </tr>
