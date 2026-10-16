@@ -10,6 +10,7 @@ export async function GET() {
     .map(([k]) => k)
     .sort();
   return Response.json({
+    commit: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? null,
     storage: storageKind,
     database: db,
     adminPasswordSet: Boolean(process.env.ADMIN_PASSWORD),
