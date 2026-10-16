@@ -16,8 +16,9 @@ export interface StoredOrder {
   customer: { email: string };
 }
 
-// DATABASE_URL is what the Neon integration sets; POSTGRES_URL covers Vercel Postgres-style setups.
-const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+// DATABASE_URL is the default name; Vercel's storage integrations may add a prefix (STORAGE_URL)
+// or use Vercel Postgres-style names (POSTGRES_URL).
+const DATABASE_URL = process.env.DATABASE_URL || process.env.STORAGE_URL || process.env.POSTGRES_URL;
 
 // On Vercel the filesystem is read-only, so data needs a database. Fail on first use (not at import),
 // so the build and static pages still work before the database is connected.
