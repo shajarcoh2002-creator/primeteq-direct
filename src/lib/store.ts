@@ -144,12 +144,16 @@ export async function upsertOrder<T extends StoredOrder>(order: T) {
 }
 
 /** Connectivity check for /api/health — never returns credentials. */
-export async function checkDatabase(): Promise<{ configured: boolean; ok: boolean; error?: string }> {
+export async function checkDatabase(): Promise<{ configured: boolean; ok: boolean; markerSince?: string; error?: string }> {
   if (!DATABASE_URL) return { configured: false, ok: false };
   try {
     await ensureSchema();
-    await sql()`select 1`;
-    return { configured: true, ok: true };
+    // A marker written once and read back on every check: if it survives redeploys,
+    // production keeps using the same database (not a fresh branch per deployment).
+    const now = sql().json({ since: new Date().toISOString() });
+    await sql()`insert into app_kv (key, value) values ('health-marker', ${now}) on conflict (key) do nothing`;
+    const rows = await sql()`select value->>'since' as since from app_kv where key = 'health-marker'`;
+    return { configured: true, ok: true, markerSince: rows[0]?.since };
   } catch (e) {
     const err = e as { code?: string; message?: string };
     const message = (err.message ?? "unknown error").replace(/\S+@\S+/g, "[redacted]").slice(0, 200);
