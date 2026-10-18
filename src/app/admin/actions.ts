@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import type { CurveId } from "@/data/catalog";
 import { parseVariantId } from "@/data/catalog";
 import { requireAdmin } from "@/lib/auth";
+import { sendEmail } from "@/lib/email";
+import { orderConfirmationEmail, shippingLabelEmail } from "@/lib/emails";
 import {
   type OrderStatus,
   STATUS_LABELS,
@@ -44,6 +46,45 @@ export async function updateOrder(form: FormData) {
   await saveOrder(order);
   revalidatePath("/admin");
   redirect(`/admin/orders/${order.id}`);
+}
+
+/** Saves the prepaid label link (from Pirate Ship) and emails it to the customer. */
+export async function sendLabel(form: FormData) {
+  await requireAdmin();
+  const order = await getOrder(String(form.get("id")));
+  if (!order) return;
+  const url = String(form.get("labelUrl") ?? "").trim();
+  const tracking = String(form.get("tracking") ?? "").trim();
+  if (!/^https:\/\/\S+$/i.test(url)) redirect(`/admin/orders/${order.id}?label=invalid`);
+
+  order.label = { url, tracking: tracking || undefined, sentAt: new Date().toISOString() };
+  if (order.status === "awaiting_device") order.status = "label_sent";
+  const sent = await sendEmail(shippingLabelEmail(order)).catch((e) => ({ ok: false, mode: "smtp" as const, detail: String(e) }));
+  order.history.push({
+    at: new Date().toISOString(),
+    status: order.status,
+    note: sent.ok
+      ? `Shipping label emailed to ${order.customer.email}${sent.mode === "outbox" ? " (local preview)" : ""}${tracking ? ` · tracking ${tracking}` : ""}`
+      : `Shipping label saved but email NOT sent: ${sent.detail}`,
+  });
+  await saveOrder(order);
+  revalidatePath("/admin");
+  redirect(`/admin/orders/${order.id}?label=${sent.ok ? "sent" : "failed"}`);
+}
+
+/** Re-sends the order confirmation email (e.g. if email wasn't configured when the order came in). */
+export async function resendConfirmation(form: FormData) {
+  await requireAdmin();
+  const order = await getOrder(String(form.get("id")));
+  if (!order) return;
+  const sent = await sendEmail(orderConfirmationEmail(order)).catch((e) => ({ ok: false, mode: "smtp" as const, detail: String(e) }));
+  order.history.push({
+    at: new Date().toISOString(),
+    status: order.status,
+    note: sent.ok ? `Confirmation email re-sent to ${order.customer.email}` : `Confirmation email NOT sent: ${sent.detail}`,
+  });
+  await saveOrder(order);
+  redirect(`/admin/orders/${order.id}?confirmation=${sent.ok ? "sent" : "failed"}`);
 }
 
 // ---------- Pricing formula ----------

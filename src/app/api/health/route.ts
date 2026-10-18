@@ -1,3 +1,4 @@
+import { emailConfigured } from "@/lib/email";
 import { checkDatabase, storageKind } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,7 @@ export async function GET() {
     storage: storageKind,
     database: db,
     adminPasswordSet: Boolean(process.env.ADMIN_PASSWORD),
+    emailConfigured,
     postgresEnvVarNames: postgresVars,
   });
 }

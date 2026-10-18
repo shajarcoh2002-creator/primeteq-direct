@@ -66,6 +66,7 @@ export async function saveCalibrationRefs(refs: CalibrationRef[]) {
 
 export type OrderStatus =
   | "awaiting_device"
+  | "label_sent"
   | "received"
   | "inspecting"
   | "countered"
@@ -76,7 +77,8 @@ export type OrderStatus =
 
 /** `en` = what the customer sees; `admin` = the internal label in the admin panel. */
 export const STATUS_LABELS: Record<OrderStatus, { en: string; admin: string }> = {
-  awaiting_device: { en: "Waiting for your device", admin: "Awaiting device" },
+  awaiting_device: { en: "Preparing your shipping label", admin: "Awaiting label" },
+  label_sent: { en: "Shipping label sent — waiting for your device", admin: "Label sent" },
   received: { en: "Device received", admin: "Received" },
   inspecting: { en: "Inspecting", admin: "Inspecting" },
   countered: { en: "Revised offer sent", admin: "Counter-offer sent" },
@@ -107,6 +109,8 @@ export interface Order {
     answers: Answers;
     quotedPrice: number;
   };
+  /** Prepaid return label created in Pirate Ship (or similar) and emailed to the customer. */
+  label?: { url: string; tracking?: string; sentAt: string };
   finalPrice: number | null;
   history: { at: string; status: OrderStatus; note: string }[];
 }

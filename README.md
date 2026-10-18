@@ -52,6 +52,15 @@ Los modelos marcados “verificar datos” tienen precio/fecha de lanzamiento es
 
 Cada `git push` a la rama principal vuelve a publicar el sitio.
 
+## Emails y etiquetas de envío
+
+- Al aceptar una oferta, el cliente recibe un email de confirmación automático.
+- En el admin, cada orden tiene la sección **Shipping label**: “Copy customer address” → crear una
+  **Return Label** USPS en Pirate Ship → pegar el link de la etiqueta → **Send label to customer**.
+  La orden pasa a “Label sent” y el cliente ve el botón “Print your shipping label” en su página de orden.
+- Los emails salen desde `SMTP_USER` (Google Workspace, contraseña de aplicación en `SMTP_PASS`).
+  Sin esas variables, en tu computadora se guardan en `data/outbox/` para verlos.
+
 ## Fotos de producto
 
 Fotos originales en `photos-raw/<modelo>.jpg` → `npm run photos` → `public/devices/<modelo>.webp`.

@@ -66,9 +66,25 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
                 </div>
                 <div className="rounded-2xl border border-line p-5">
                   <h2 className="font-display text-lg font-bold">Send your device</h2>
-                  <p className="mt-3 text-sm text-ink-2">
-                    Your free prepaid shipping label and instructions arrive by email within {POLICY.labelWithin}. Pack the device securely, attach the label and drop it off with the carrier shown on it.
-                  </p>
+                  {order.label ? (
+                    <>
+                      <p className="mt-3 text-sm text-ink-2">
+                        Your prepaid USPS label is ready. Print it, tape it to a small padded box and drop it off at any USPS location.
+                      </p>
+                      <a href={order.label.url} target="_blank" rel="noopener noreferrer" className="btn btn-primary mt-4 w-full sm:w-auto">
+                        Print your shipping label
+                      </a>
+                      {order.label.tracking && (
+                        <p className="mt-3 text-sm text-muted">
+                          USPS tracking: <span className="font-mono text-ink">{order.label.tracking}</span>
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="mt-3 text-sm text-ink-2">
+                      Your free prepaid shipping label and instructions arrive by email within {POLICY.labelWithin}. Pack the device securely, attach the label and drop it off with the carrier shown on it.
+                    </p>
+                  )}
                   <p className="mt-3 text-sm text-ink-2">
                     This offer is valid until <strong>{fmtDate(order.expiresAt)}</strong>.
                   </p>

@@ -3,6 +3,8 @@
 import { redirect } from "next/navigation";
 import { CARRIER_LABELS } from "@/data/catalog";
 import { type Order, type PayoutMethod, newOrderId, quoteById, saveOrder } from "@/lib/db";
+import { sendEmail } from "@/lib/email";
+import { orderConfirmationEmail } from "@/lib/emails";
 import { parseAnswers } from "@/lib/quote-params";
 
 export interface CheckoutState {
@@ -64,5 +66,15 @@ export async function createOrder(_prev: CheckoutState, form: FormData): Promise
   };
 
   await saveOrder(order);
+
+  // Confirmation email. A failure never blocks the order; it's recorded in the order history for the admin.
+  const sent = await sendEmail(orderConfirmationEmail(order)).catch((e) => ({ ok: false, mode: "smtp", detail: String(e) }));
+  order.history.push({
+    at: new Date().toISOString(),
+    status: order.status,
+    note: sent.ok ? `Confirmation email sent to ${email}${sent.mode === "outbox" ? " (local preview)" : ""}` : `Confirmation email NOT sent: ${sent.detail}`,
+  });
+  await saveOrder(order);
+
   redirect(`/order/${order.id}?new=1`);
 }
