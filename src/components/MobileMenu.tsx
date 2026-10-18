@@ -61,21 +61,24 @@ export function MobileMenu({ utility }: { utility: NavLink[] }) {
                 (e.target as HTMLElement).closest("a") && setOpen(false)
               }
             >
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {MAIN_NAV.map((l) => {
                   const current = l.label === section;
-                  return (
+                  const cls = "flex flex-col items-center rounded-xl border py-3 text-center text-sm font-bold uppercase tracking-[0.08em]";
+                  return l.href ? (
                     <Link
                       key={l.label}
                       href={l.href}
                       aria-current={current ? "page" : undefined}
-                      className={`flex flex-col items-center rounded-xl border py-3 text-center text-sm font-bold uppercase tracking-[0.08em] ${
-                        current ? "border-brand bg-brand-soft text-brand" : "border-line text-ink"
-                      }`}
+                      className={`${cls} ${current ? "border-brand bg-brand-soft text-brand" : "border-line text-ink"}`}
                     >
                       {l.label}
-                      {l.soon && <span className="mt-0.5 text-[10px] font-semibold normal-case tracking-normal text-muted">Coming soon</span>}
                     </Link>
+                  ) : (
+                    <span key={l.label} aria-disabled="true" className={`${cls} cursor-default border-line text-muted/70`}>
+                      {l.label}
+                      <span className="mt-0.5 text-[10px] font-semibold normal-case tracking-normal text-muted">Coming soon</span>
+                    </span>
                   );
                 })}
               </div>

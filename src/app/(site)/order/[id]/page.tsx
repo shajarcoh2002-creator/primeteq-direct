@@ -4,6 +4,7 @@ import { CARRIER_LABELS, parseVariantId } from "@/data/catalog";
 import { STATUS_LABELS, getOrder } from "@/lib/db";
 import { CONDITION_LABELS } from "@/lib/pricing";
 import { FlowBar } from "@/components/FlowBar";
+import { POLICY } from "@/lib/policy";
 import { getDevicePhoto } from "@/lib/photos";
 import { QuoteSummary } from "@/components/QuoteSummary";
 
@@ -40,7 +41,7 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
                 <div>
                   <p className="font-display text-lg font-bold">Offer accepted.</p>
                   <p className="mt-1 text-sm text-muted">
-                    Your order number is <strong className="text-ink">{order.id}</strong>. We’ll send next steps to {order.customer.email}. Keep your order
+                    Your order number is <strong className="text-ink">{order.id}</strong>. We’ll email your free prepaid shipping label and instructions to {order.customer.email} within {POLICY.labelWithin}. Keep your order
                     number to track it.
                   </p>
                 </div>
@@ -66,7 +67,7 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
                 <div className="rounded-2xl border border-line p-5">
                   <h2 className="font-display text-lg font-bold">Send your device</h2>
                   <p className="mt-3 text-sm text-ink-2">
-                    Shipping instructions: <span className="placeholder-note">Shipping policy to be confirmed</span>
+                    Your free prepaid shipping label and instructions arrive by email within {POLICY.labelWithin}. Pack the device securely, attach the label and drop it off with the carrier shown on it.
                   </p>
                   <p className="mt-3 text-sm text-ink-2">
                     This offer is valid until <strong>{fmtDate(order.expiresAt)}</strong>.

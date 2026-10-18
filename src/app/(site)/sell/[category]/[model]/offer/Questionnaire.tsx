@@ -224,7 +224,7 @@ export function Questionnaire(props: Props) {
         offer={offer}
         footer={
           <>
-            Your offer is based on your answers. Inspection and final-amount policy: <span className="placeholder-note">To be confirmed</span>
+            Your offer is based on your answers and confirmed when we inspect your device. Free shipping, paid by PayPal or Zelle.
           </>
         }
       >

@@ -55,6 +55,7 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
             <p className="font-semibold">
               {payout.method === "check" ? "Check by mail" : `${payout.method === "paypal" ? "PayPal" : "Zelle"}: ${payout.handle}`}
             </p>
+            {payout.accountName && <p>Name on account: {payout.accountName}</p>}
           </div>
         </section>
 

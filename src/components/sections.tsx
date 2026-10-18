@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { CONTACT } from "@/lib/contact";
 import { HashOpener } from "./HashOpener";
+import { InstagramIcon } from "./InstagramIcon";
 import { ClipboardCheck, ListChecks, PackageOpen, Route, ShieldCheck, Smartphone, Workflow } from "lucide-react";
 
 export function HowItWorks() {
@@ -36,7 +38,8 @@ export function HowItWorks() {
           ))}
         </ol>
         <p className="mt-8 text-sm text-muted sm:mt-10">
-          Shipping and payment details: <span className="placeholder-note">Policy to be confirmed</span>
+          Shipping is free and you’re paid by PayPal or Zelle.{" "}
+          <Link href="/shipping-payments" className="font-semibold text-brand hover:underline">Shipping &amp; Payments details</Link>
         </p>
       </div>
     </section>
@@ -85,7 +88,12 @@ export function Faq({ items, title = "Questions, answered." }: { items: FaqItem[
           <p className="eyebrow">FAQ</p>
           <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">{title}</h2>
           <p className="mt-4 text-muted">
-            Still need help? <span className="placeholder-note">Support contact — to confirm</span>
+            Still need help? Email{" "}
+            <a href={`mailto:${CONTACT.email}`} className="font-semibold text-brand hover:underline">{CONTACT.email}</a> or message us on{" "}
+            <a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-brand hover:underline">
+              <InstagramIcon className="h-3.5 w-3.5" /> Instagram
+            </a>
+            .
           </p>
         </div>
         <div className="divide-y divide-line border-y border-line">

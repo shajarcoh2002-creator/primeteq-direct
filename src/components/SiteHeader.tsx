@@ -28,7 +28,7 @@ export function SiteHeader() {
           <Logo />
           <MainNav />
           <div className="flex items-center gap-2 md:hidden">
-            <Link href="/sell/iphone" className="btn btn-primary !min-h-10 !px-4 !py-2 text-sm">Sell now</Link>
+            <Link href="/sell/iphone" className="btn btn-primary !min-h-10 whitespace-nowrap !px-4 !py-2 text-sm">Sell now</Link>
             <MobileMenu utility={UTILITY_NAV} />
           </div>
         </div>

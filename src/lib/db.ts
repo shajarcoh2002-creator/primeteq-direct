@@ -86,6 +86,7 @@ export const STATUS_LABELS: Record<OrderStatus, { en: string; admin: string }> =
   cancelled: { en: "Cancelled", admin: "Cancelled" },
 };
 
+// "check" is kept only so older orders still type-check; new orders use PayPal or Zelle.
 export type PayoutMethod = "paypal" | "zelle" | "check";
 
 export interface Order {
@@ -95,7 +96,8 @@ export interface Order {
   status: OrderStatus;
   customer: { name: string; email: string; phone: string };
   address: { line1: string; line2: string; city: string; state: string; zip: string };
-  payout: { method: PayoutMethod; handle: string };
+  /** handle = PayPal email, or Zelle email / US mobile number. accountName = name on the Zelle-enrolled bank account. */
+  payout: { method: PayoutMethod; handle: string; accountName?: string };
   item: {
     variantId: string;
     modelName: string;

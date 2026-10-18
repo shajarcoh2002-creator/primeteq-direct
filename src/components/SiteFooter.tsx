@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { CATEGORIES } from "@/data/catalog";
+import { Mail } from "lucide-react";
+import { CONTACT } from "@/lib/contact";
+import { InstagramIcon } from "./InstagramIcon";
 import { Logo } from "./Logo";
 
 const COLUMNS = [
@@ -16,8 +19,8 @@ const COLUMNS = [
     title: "Policies",
     links: [
       { label: "Terms of Service", href: "/terms" },
-      { label: "Privacy Policy", href: "#", placeholder: true },
-      { label: "Shipping & Payments", href: "#", placeholder: true },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Shipping & Payments", href: "/shipping-payments" },
     ],
   },
 ];
@@ -29,14 +32,14 @@ export function SiteFooter() {
         <div className="col-span-2 space-y-4 md:col-span-1">
           <Logo className="h-7 w-auto" />
           <p className="max-w-xs text-sm text-muted">Buy, sell, trade and upgrade your tech.</p>
-          <div className="space-y-1 text-sm">
-            <a href="https://primeteqdirect.com" className="font-semibold text-ink hover:text-brand">primeteqdirect.com</a>
-            <p className="text-muted">
-              Email: <span className="placeholder-note">Contact email — to confirm</span>
-            </p>
-            <p className="text-muted">
-              Phone: <span className="placeholder-note">Support phone — to confirm</span>
-            </p>
+          <div className="space-y-2 text-sm">
+            <a href={`https://${CONTACT.website}`} className="block font-semibold text-ink hover:text-brand">{CONTACT.website}</a>
+            <a href={`mailto:${CONTACT.email}`} className="flex items-center gap-2 text-muted hover:text-brand">
+              <Mail className="h-4 w-4" /> {CONTACT.email}
+            </a>
+            <a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-muted hover:text-brand">
+              <InstagramIcon /> {CONTACT.instagramHandle}
+            </a>
           </div>
         </div>
         {COLUMNS.map((col) => (
@@ -48,7 +51,6 @@ export function SiteFooter() {
                   <Link href={l.href} className="text-muted hover:text-brand">
                     {l.label}
                   </Link>
-                  {"placeholder" in l && l.placeholder && <span className="placeholder-note ml-2">Placeholder</span>}
                 </li>
               ))}
             </ul>

@@ -64,7 +64,7 @@ export default async function CategoryPage({ params }: PageProps<"/sell/[categor
 
       <HowItWorks />
       <TrustGrid />
-      <Faq items={sellFaqs(category.id)} />
+      <Faq items={sellFaqs(category.id, settings.offerValidDays)} />
       <ClosingCta href="#models" label={`Choose your ${category.name}`} />
     </>
   );
