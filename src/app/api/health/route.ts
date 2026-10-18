@@ -16,6 +16,8 @@ export async function GET() {
     database: db,
     adminPasswordSet: Boolean(process.env.ADMIN_PASSWORD),
     emailConfigured,
+    // Names only (never values) of email-related variables, to spot typos or missing environments.
+    emailEnvVarNames: Object.keys(process.env).filter((k) => /SMTP|MAIL/i.test(k)).sort(),
     postgresEnvVarNames: postgresVars,
   });
 }
