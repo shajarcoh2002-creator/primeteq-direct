@@ -69,14 +69,14 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
                   {order.label ? (
                     <>
                       <p className="mt-3 text-sm text-ink-2">
-                        Your prepaid USPS label is ready. Print it, tape it to a small padded box and drop it off at any USPS location.
+                        Your prepaid shipping label is ready. Print it, tape it to a small padded box and drop it off with the carrier shown on the label.
                       </p>
                       <a href={order.label.url} target="_blank" rel="noopener noreferrer" className="btn btn-primary mt-4 w-full sm:w-auto">
                         Print your shipping label
                       </a>
                       {order.label.tracking && (
                         <p className="mt-3 text-sm text-muted">
-                          USPS tracking: <span className="font-mono text-ink">{order.label.tracking}</span>
+                          Tracking: <span className="font-mono text-ink">{order.label.tracking}</span>
                         </p>
                       )}
                     </>

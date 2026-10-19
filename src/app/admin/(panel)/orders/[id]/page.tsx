@@ -52,7 +52,7 @@ export default async function AdminOrderPage({ params, searchParams }: PageProps
             <p className="mt-1 text-sm text-muted">
               {order.label
                 ? `Sent ${new Date(order.label.sentAt).toLocaleString("en-US")}${order.label.tracking ? ` · Tracking ${order.label.tracking}` : ""}`
-                : "Create a USPS return label in Pirate Ship, then paste its link here to email it to the customer."}
+                : "Create a prepaid return label (e.g. in Pirate Ship), then paste its link here to email it to the customer."}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -64,8 +64,8 @@ export default async function AdminOrderPage({ params, searchParams }: PageProps
         </div>
         {!order.label && (
           <ol className="mt-4 list-decimal space-y-1 pl-5 text-sm text-ink-2">
-            <li>In Pirate Ship, create a <strong>Return Label</strong> (USPS) and paste the customer address in “Ship To”.</li>
-            <li>Buy the label, then use <strong>Share</strong> to copy the label link.</li>
+            <li>In your shipping tool (e.g. Pirate Ship), create a <strong>return label</strong> with the customer address as the sender.</li>
+            <li>Buy the label and copy its link (in Pirate Ship, use <strong>Share</strong>).</li>
             <li>Paste the link below (and the tracking number if you have it) and press Send.</li>
           </ol>
         )}

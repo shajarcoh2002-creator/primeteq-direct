@@ -56,7 +56,7 @@ Cada `git push` a la rama principal vuelve a publicar el sitio.
 
 - Al aceptar una oferta, el cliente recibe un email de confirmación automático.
 - En el admin, cada orden tiene la sección **Shipping label**: “Copy customer address” → crear una
-  **Return Label** USPS en Pirate Ship → pegar el link de la etiqueta → **Send label to customer**.
+  **Return Label** en Pirate Ship (u otro servicio de envíos) → pegar el link de la etiqueta → **Send label to customer**.
   La orden pasa a “Label sent” y el cliente ve el botón “Print your shipping label” en su página de orden.
 - Los emails salen desde `SMTP_USER` (Google Workspace, contraseña de aplicación en `SMTP_PASS`).
   Sin esas variables, en tu computadora se guardan en `data/outbox/` para verlos.

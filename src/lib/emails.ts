@@ -76,7 +76,7 @@ export function orderConfirmationEmail(order: Order): EmailMessage {
     "Your offer is accepted",
     `<p style="margin:0">Hi ${esc(first)}, thanks for selling with Prime Teq. Here’s your order:</p>
 ${summaryTable(order)}
-<p style="margin:0"><strong>What’s next:</strong> we’ll email your free prepaid USPS shipping label and instructions within ${POLICY.labelWithin}.</p>
+<p style="margin:0"><strong>What’s next:</strong> we’ll email your free prepaid shipping label and instructions within ${POLICY.labelWithin}.</p>
 <p style="margin:16px 0 0"><strong>Get your device ready:</strong></p>
 ${list(PREP)}
 ${button(orderUrl, "View your order")}
@@ -92,7 +92,7 @@ Condition: ${CONDITION_LABELS[order.item.condition]}
 Your offer: ${money(order.finalPrice ?? order.item.quotedPrice)}
 Offer valid until: ${fmtDate(order.expiresAt)}
 
-What's next: we'll email your free prepaid USPS shipping label and instructions within ${POLICY.labelWithin}.
+What's next: we'll email your free prepaid shipping label and instructions within ${POLICY.labelWithin}.
 
 Get your device ready:
 ${PREP.map((p) => `- ${p}`).join("\n")}
@@ -111,7 +111,7 @@ export function shippingLabelEmail(order: Order): EmailMessage {
   const steps = [
     "Click “Print your shipping label” above and print it (any printer works).",
     "Wrap the device in padding and put it in a small, sturdy box so it can’t move.",
-    "Tape the label to the box and drop it off at any USPS location or blue USPS mailbox.",
+    "Tape the label to the box and drop it off with the carrier shown on the label.",
   ];
   const html = layout(
     "Your free shipping label is ready",
@@ -120,7 +120,7 @@ ${button(label.url, "Print your shipping label")}
 <p style="margin:0"><strong>How to ship:</strong></p>
 ${list(steps, true)}
 <p style="margin:16px 0 0">Please ship by <strong>${fmtDate(order.expiresAt)}</strong> to keep your offer of <strong>${money(order.finalPrice ?? order.item.quotedPrice)}</strong>.</p>
-${label.tracking ? `<p style="margin:12px 0 0">USPS tracking number: <strong>${esc(label.tracking)}</strong></p>` : ""}
+${label.tracking ? `<p style="margin:12px 0 0">Tracking number: <strong>${esc(label.tracking)}</strong></p>` : ""}
 <p style="margin:16px 0 0"><strong>Before you ship, make sure you:</strong></p>
 ${list(PREP)}
 <p style="margin:16px 0 0">Once your device arrives, we inspect it within ${POLICY.inspectionWithin} and send your payment within ${POLICY.paymentWithin} of approval.</p>
@@ -136,7 +136,7 @@ How to ship:
 ${steps.map((s, i) => `${i + 1}. ${s}`).join("\n")}
 
 Please ship by ${fmtDate(order.expiresAt)} to keep your offer of ${money(order.finalPrice ?? order.item.quotedPrice)}.
-${label.tracking ? `USPS tracking number: ${label.tracking}\n` : ""}
+${label.tracking ? `Tracking number: ${label.tracking}\n` : ""}
 Before you ship:
 ${PREP.map((p) => `- ${p}`).join("\n")}
 
