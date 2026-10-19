@@ -1,4 +1,4 @@
-import { emailConfigured } from "@/lib/email";
+import { emailConfigured, siteUrl } from "@/lib/email";
 import { checkDatabase, storageKind } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +16,7 @@ export async function GET() {
     database: db,
     adminPasswordSet: Boolean(process.env.ADMIN_PASSWORD),
     emailConfigured,
+    siteUrl: siteUrl(),
     // Names only (never values) of email-related variables, to spot typos or missing environments.
     emailEnvVarNames: Object.keys(process.env).filter((k) => /SMTP|MAIL/i.test(k)).sort(),
     postgresEnvVarNames: postgresVars,
