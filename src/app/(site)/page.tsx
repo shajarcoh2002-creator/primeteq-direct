@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { CATEGORIES, modelsIn } from "@/data/catalog";
 import { DeviceArt } from "@/components/DeviceArt";
 import { FlowBar } from "@/components/FlowBar";
-import { ClosingCta, Faq, HowItWorks, TrustGrid } from "@/components/sections";
+import { ClosingCta, Faq, HowItWorks, NotAccepted, TrustGrid } from "@/components/sections";
 import { sellFaqs } from "@/components/faqs";
 
 export default function Home() {
@@ -42,6 +42,7 @@ export default function Home() {
       </section>
 
       <HowItWorks />
+      <NotAccepted />
       <TrustGrid />
       <Faq items={sellFaqs(null)} />
       <ClosingCta href="/sell/iphone" label="Choose your iPhone" />

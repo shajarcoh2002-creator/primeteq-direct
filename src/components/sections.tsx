@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CONTACT } from "@/lib/contact";
 import { HashOpener } from "./HashOpener";
 import { InstagramIcon } from "./InstagramIcon";
-import { ClipboardCheck, ListChecks, PackageOpen, Route, ShieldCheck, Smartphone, Workflow } from "lucide-react";
+import { Ban, ClipboardCheck, CreditCard, Globe, ListChecks, Lock, PackageOpen, Route, ShieldAlert, ShieldCheck, Smartphone, Workflow, Wrench } from "lucide-react";
 
 export function HowItWorks() {
   const steps = [
@@ -40,6 +40,46 @@ export function HowItWorks() {
         <p className="mt-8 text-sm text-muted sm:mt-10">
           Shipping is free and you’re paid by PayPal or Zelle.{" "}
           <Link href="/shipping-payments" className="font-semibold text-brand hover:underline">Shipping &amp; Payments details</Link>
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/** Eligibility, in plain words — mirrors the “Eligible devices” section of the Terms. */
+export function NotAccepted() {
+  const items = [
+    { icon: ShieldAlert, title: "Lost or stolen devices", body: "Devices reported lost or stolen, or blacklisted by a carrier." },
+    { icon: CreditCard, title: "Unpaid financing", body: "Devices with a remaining balance or payment plan with a carrier or store." },
+    { icon: Lock, title: "Locked devices", body: "Find My, Google or Samsung account protection still turned on." },
+    { icon: Wrench, title: "Modified or fake parts", body: "Devices altered from factory specs or with counterfeit parts." },
+    { icon: Ban, title: "Accessories", body: "Cases, chargers, cables and boxes — we don’t buy them or send them back." },
+    { icon: Globe, title: "Outside the U.S.", body: "For now we only buy from sellers shipping from the United States." },
+  ];
+  return (
+    <section id="not-accepted" className="scroll-mt-28 bg-white">
+      <div className="container-page py-12 md:py-20">
+        <div className="max-w-2xl">
+          <p className="eyebrow">Before you sell</p>
+          <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">What we don’t accept.</h2>
+          <p className="mt-3 text-muted">Check this list first so your trade goes smoothly.</p>
+        </div>
+        <ul className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((it) => (
+            <li key={it.title} className="flex gap-4 rounded-2xl border border-line p-4 md:p-5">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-danger-soft text-danger">
+                <it.icon className="h-5 w-5" strokeWidth={1.75} />
+              </span>
+              <div>
+                <h3 className="font-bold">{it.title}</h3>
+                <p className="mt-1 text-sm text-muted">{it.body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-6 text-sm text-muted">
+          Broken, cracked or not-working devices are fine — they just get a lower offer. Full details in our{" "}
+          <Link href="/terms#s2" className="font-semibold text-brand hover:underline">Terms of Service</Link>.
         </p>
       </div>
     </section>
