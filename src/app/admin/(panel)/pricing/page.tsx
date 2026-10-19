@@ -120,7 +120,14 @@ export default async function PricingPage({ searchParams }: PageProps<"/admin/pr
           </div>
         </section>
 
-        <section className="grid gap-4 rounded-2xl border border-line bg-white p-5 sm:grid-cols-2">
+        <section className="grid gap-4 rounded-2xl border border-line bg-white p-5 sm:grid-cols-3">
+          <div>
+            <label className="label" htmlFor="storagePremiumPct">Extra storage value (%)</label>
+            <input id="storagePremiumPct" name="storagePremiumPct" defaultValue={settings.storagePremiumPct} className="field" inputMode="decimal" />
+            <p className="mt-1 text-xs text-muted">
+              Share of a bigger storage tier’s extra launch price that a used device keeps. 26% = Gazelle’s 17 Pro Max 256GB → 1TB gap.
+            </p>
+          </div>
           <div>
             <label className="label" htmlFor="offerValidDays">Offer valid for (days)</label>
             <input id="offerValidDays" name="offerValidDays" defaultValue={settings.offerValidDays} className="field" inputMode="numeric" />

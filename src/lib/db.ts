@@ -52,6 +52,9 @@ const SEED_REFS: CalibrationRef[] = [
   { id: "seed-fair", variantId: "iphone-17-pro__256gb__unlocked", condition: "fair", referencePrice: 636, source: "Gazelle", checkedAt: "2026-10-14" },
   { id: "seed-poor", variantId: "iphone-17-pro__256gb__unlocked", condition: "poor", referencePrice: 378, source: "Gazelle", checkedAt: "2026-10-14" },
   { id: "seed-broken", variantId: "iphone-17-pro__256gb__unlocked", condition: "broken", referencePrice: 274, source: "Gazelle", checkedAt: "2026-10-14" },
+  { id: "seed-17pm-256-unl", variantId: "iphone-17-pro-max__256gb__unlocked", condition: "good", referencePrice: 745, source: "Gazelle", checkedAt: "2026-10-18" },
+  { id: "seed-17pm-1tb-unl", variantId: "iphone-17-pro-max__1tb__unlocked", condition: "good", referencePrice: 811, source: "Gazelle", checkedAt: "2026-10-18" },
+  { id: "seed-17pm-1tb-att", variantId: "iphone-17-pro-max__1tb__att", condition: "good", referencePrice: 726, source: "Gazelle", checkedAt: "2026-10-18" },
 ];
 
 export async function getCalibrationRefs() {

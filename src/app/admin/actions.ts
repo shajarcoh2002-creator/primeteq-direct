@@ -122,6 +122,8 @@ export async function savePricing(form: FormData) {
     const cal = num(form, `calibration.${k}`);
     if (Number.isFinite(cal) && cal > 0) next.calibrationPct[k] = cal;
   }
+  const storagePct = num(form, "storagePremiumPct");
+  if (Number.isFinite(storagePct) && storagePct >= 0 && storagePct <= 100) next.storagePremiumPct = storagePct;
   const days = num(form, "offerValidDays");
   if (Number.isFinite(days) && days > 0) next.offerValidDays = days;
   const min = num(form, "minOffer");

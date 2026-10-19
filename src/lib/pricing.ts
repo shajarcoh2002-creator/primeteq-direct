@@ -35,6 +35,8 @@ export interface PricingSettings {
   /** [ageMonths, % of launch price] points, interpolated linearly. */
   curves: Record<CurveId, [number, number][]>;
   calibrationPct: Record<CurveId, number>;
+  /** Share (%) of the extra launch price of a bigger storage tier that a used device keeps. */
+  storagePremiumPct: number;
   offerValidDays: number;
   minOffer: number;
 }
@@ -60,14 +62,18 @@ export const DEFAULT_SETTINGS: PricingSettings = {
     marginPct: 7,
   },
   conditionPct: { flawless: 100, good: 100, fair: 96, poor: 57, broken: 41 },
-  carrierPct: { unlocked: 100, att: 92, tmobile: 92, verizon: 92, other: 80, wifi: 100, cellular: 108 },
+  // AT&T from Gazelle (17 Pro Max 1TB: $726 AT&T vs $811 unlocked); T-Mobile and Verizon assumed the same until checked.
+  carrierPct: { unlocked: 100, att: 89.5, tmobile: 89.5, verizon: 89.5, other: 80, wifi: 100, cellular: 108 },
   curves: {
     "apple-phone": [[0, 93], [6, 90], [12, 88], [24, 68], [36, 52], [48, 38], [60, 27], [72, 18], [84, 12], [96, 8], [120, 5]],
     samsung: [[0, 80], [6, 70], [12, 60], [24, 42], [36, 30], [48, 20], [60, 13], [72, 8], [96, 4]],
     google: [[0, 75], [6, 62], [12, 52], [24, 36], [36, 24], [48, 15], [60, 9], [84, 4]],
     "apple-tablet": [[0, 85], [12, 75], [24, 60], [36, 48], [48, 37], [60, 28], [84, 15], [120, 7]],
   },
-  calibrationPct: { "apple-phone": 100, samsung: 100, google: 100, "apple-tablet": 100 },
+  // iPhone 101.5%: best fit to 4 Gazelle references (all within ±1.5%). Other brands not calibrated yet.
+  calibrationPct: { "apple-phone": 101.5, samsung: 100, google: 100, "apple-tablet": 100 },
+  // Gazelle, Oct 2026: iPhone 17 Pro Max 256GB → 1TB unlocked = $745 → $811 (+$66 for +$400 at launch).
+  storagePremiumPct: 26,
   offerValidDays: 30,
   minOffer: 1,
 };
@@ -111,7 +117,10 @@ export function estimateResale(
   const curvePct = curveValue(settings.curves[model.curve], ageMonths);
   const manual = overrides[resaleKey(model.slug, storage.label)];
   if (manual && manual > 0) return { resale: manual, source: "manual", ageMonths, curvePct };
-  return { resale: (storage.msrp * curvePct) / 100, source: "curve", ageMonths, curvePct };
+  // Used buyers pay only part of the launch-price premium for extra storage.
+  const baseMsrp = Math.min(...model.storage.map((o) => o.msrp));
+  const effectiveMsrp = baseMsrp + ((storage.msrp - baseMsrp) * settings.storagePremiumPct) / 100;
+  return { resale: (effectiveMsrp * curvePct) / 100, source: "curve", ageMonths, curvePct };
 }
 
 /** Base offer: good condition, unlocked, after calibration — before carrier/condition. */
@@ -173,6 +182,7 @@ export function mergeSettings(saved: Partial<PricingSettings> | null | undefined
     carrierPct: { ...d.carrierPct, ...saved.carrierPct },
     curves: { ...d.curves, ...saved.curves },
     calibrationPct: { ...d.calibrationPct, ...saved.calibrationPct },
+    storagePremiumPct: saved.storagePremiumPct ?? d.storagePremiumPct,
     offerValidDays: saved.offerValidDays ?? d.offerValidDays,
     minOffer: saved.minOffer ?? d.minOffer,
   };

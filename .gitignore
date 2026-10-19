@@ -46,3 +46,6 @@ next-env.d.ts
 
 # raw product photos (processed copies go to public/devices)
 /photos-raw/
+
+# generated files (price lists, etc.)
+/exports/
