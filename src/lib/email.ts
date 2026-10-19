@@ -4,8 +4,9 @@ import nodemailer from "nodemailer";
 import { CONTACT } from "./contact";
 
 // Outgoing email.
-//  - SMTP_USER + SMTP_PASS set → sent through that mailbox (Google Workspace: sales@primeteqdirect.com
-//    with an app password; host defaults to smtp.gmail.com). Sent mail also shows in that mailbox's Sent folder.
+//  - SMTP_USER + SMTP_PASS set → sent through that SMTP server.
+//      Google Workspace: SMTP_USER=sales@primeteqdirect.com, SMTP_PASS=app password (host defaults to smtp.gmail.com).
+//      Resend: SMTP_HOST=smtp.resend.com, SMTP_USER=resend, SMTP_PASS=API key, EMAIL_FROM=sales@primeteqdirect.com.
 //  - Not set, outside Vercel → written to ./data/outbox/*.html so emails can be previewed locally.
 //  - Not set on Vercel → skipped; the order history records that no email went out.
 
@@ -24,6 +25,8 @@ export interface EmailResult {
 
 const user = process.env.SMTP_USER;
 const pass = process.env.SMTP_PASS;
+/** Sender address; defaults to the SMTP login, which works for Gmail. Providers like Resend need it set. */
+const from = process.env.EMAIL_FROM || user;
 export const emailConfigured = Boolean(user && pass);
 
 type Transport = ReturnType<typeof nodemailer.createTransport>;
@@ -51,7 +54,7 @@ export async function sendEmail(msg: EmailMessage): Promise<EmailResult> {
   if (emailConfigured) {
     try {
       await transport().sendMail({
-        from: { name: "Prime Teq", address: user! },
+        from: { name: "Prime Teq", address: from! },
         replyTo: CONTACT.email,
         to: msg.to,
         subject: msg.subject,
