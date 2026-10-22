@@ -106,17 +106,18 @@ Questions? ${CONTACT.email}`;
 /** Sent from the admin once the prepaid label is created. */
 export function shippingLabelEmail(order: Order): EmailMessage {
   const label = order.label!;
+  // Links only to our own domain: links to a third-party label host in a "print your label" email look like phishing to spam filters.
   const orderUrl = `${siteUrl()}/order/${order.id}`;
   const first = order.customer.name.split(" ")[0] || "there";
   const steps = [
-    "Click “Print your shipping label” above and print it (any printer works).",
+    "Click “View & print your label” above, then print it (any printer works).",
     "Wrap the device in padding and put it in a small, sturdy box so it can’t move.",
     "Tape the label to the box and drop it off with the carrier shown on the label.",
   ];
   const html = layout(
-    "Your free shipping label is ready",
+    "Your shipping label is ready",
     `<p style="margin:0">Hi ${esc(first)}, here’s your prepaid shipping label for order <strong>${esc(order.id)}</strong> (${esc(order.item.modelName)} ${esc(order.item.storage)}).</p>
-${button(label.url, "Print your shipping label")}
+${button(orderUrl, "View & print your label")}
 <p style="margin:0"><strong>How to ship:</strong></p>
 ${list(steps, true)}
 <p style="margin:16px 0 0">Please ship by <strong>${fmtDate(order.expiresAt)}</strong> to keep your offer of <strong>${money(order.finalPrice ?? order.item.quotedPrice)}</strong>.</p>
@@ -124,13 +125,13 @@ ${label.tracking ? `<p style="margin:12px 0 0">Tracking number: <strong>${esc(la
 <p style="margin:16px 0 0"><strong>Before you ship, make sure you:</strong></p>
 ${list(PREP)}
 <p style="margin:16px 0 0">Once your device arrives, we inspect it within ${POLICY.inspectionWithin} and send your payment within ${POLICY.paymentWithin} of approval.</p>
-<p style="margin:16px 0 0"><a href="${orderUrl}" style="color:${BLUE}">Track your order</a></p>`,
+<p style="margin:16px 0 0;color:#5B6475;font-size:13px">You can also find your label any time on your order page: ${esc(orderUrl.replace(/^https?:\/\//, ""))}</p>`,
   );
-  const text = `Your free shipping label is ready
+  const text = `Your shipping label is ready
 
 Hi ${first}, here's your prepaid shipping label for order ${order.id} (${order.item.modelName} ${order.item.storage}).
 
-Print your label: ${label.url}
+View and print your label: ${orderUrl}
 
 How to ship:
 ${steps.map((s, i) => `${i + 1}. ${s}`).join("\n")}
@@ -139,8 +140,6 @@ Please ship by ${fmtDate(order.expiresAt)} to keep your offer of ${money(order.f
 ${label.tracking ? `Tracking number: ${label.tracking}\n` : ""}
 Before you ship:
 ${PREP.map((p) => `- ${p}`).join("\n")}
-
-Track your order: ${orderUrl}
 
 Questions? ${CONTACT.email}`;
   return { to: order.customer.email, subject: `Your Prime Teq shipping label — order ${order.id}`, html, text };

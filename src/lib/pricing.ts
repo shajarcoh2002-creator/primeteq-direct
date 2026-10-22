@@ -74,7 +74,7 @@ export const DEFAULT_SETTINGS: PricingSettings = {
   calibrationPct: { "apple-phone": 101.5, samsung: 100, google: 100, "apple-tablet": 100 },
   // Gazelle, Oct 2026: iPhone 17 Pro Max 256GB → 1TB unlocked = $745 → $811 (+$66 for +$400 at launch).
   storagePremiumPct: 26,
-  offerValidDays: 30,
+  offerValidDays: 15,
   minOffer: 1,
 };
 

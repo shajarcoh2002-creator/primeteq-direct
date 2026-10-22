@@ -6,7 +6,7 @@ import { resetPricing, savePricing } from "../../actions";
 const COST_FIELDS: { key: string; label: string; unit: "%" | "$"; help: string }[] = [
   { key: "marketplaceFeePct", label: "Resale fee", unit: "%", help: "What eBay / Back Market / your sales channel charges when you resell" },
   { key: "riskPct", label: "Risk (fraud, returns)", unit: "%", help: "Reserve for devices that arrive worse than described or locked" },
-  { key: "holdDepreciationPct", label: "Depreciation while held", unit: "%", help: "30-day offer window + ~15 days until resold" },
+  { key: "holdDepreciationPct", label: "Depreciation while held", unit: "%", help: "Offer window (15 days) + time until resold" },
   { key: "marginPct", label: "Your margin", unit: "%", help: "Target margin on the resale price" },
   { key: "refurbCost", label: "Cleaning / testing", unit: "$", help: "Fixed cost per device" },
   { key: "shippingCost", label: "Shipping", unit: "$", help: "Prepaid label + shipping to the buyer" },
