@@ -50,7 +50,7 @@ export default async function OrdersPage({ searchParams }: PageProps<"/admin">) 
                 <td className="p-3">{o.customer.name}<br /><span className="text-muted">{o.customer.email}</span></td>
                 <td className="p-3">{o.item.modelName} {o.item.storage}<br /><span className="text-muted">{CARRIER_LABELS[o.item.carrier]} · {o.item.condition}</span></td>
                 <td className="p-3 font-semibold">${(o.finalPrice ?? o.item.quotedPrice).toLocaleString("en-US")}</td>
-                <td className="p-3">{STATUS_LABELS[o.status].admin}</td>
+                <td className="p-3">{STATUS_LABELS[o.status].admin}<br /><span className="text-muted">{o.country === "PA" ? "🇵🇦 Panama" : "🇺🇸 U.S."}</span></td>
               </tr>
             ))}
             {orders.length === 0 && (

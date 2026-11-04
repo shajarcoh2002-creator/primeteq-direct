@@ -1,4 +1,5 @@
 import type { CategoryId } from "@/data/catalog";
+import type { Dict } from "@/i18n/en";
 
 /** Neutral line illustration — no product photos, no specific SKU. */
 export function DeviceArt({ category, className = "h-24" }: { category: CategoryId; className?: string }) {
@@ -24,11 +25,12 @@ export function DeviceArt({ category, className = "h-24" }: { category: Category
 }
 
 /** Hero teaser: shows the three things the flow asks for — no prices, no stock. */
-export function HeroTeaser({ category, deviceLabel }: { category: CategoryId; deviceLabel: string }) {
+export function HeroTeaser({ category, deviceLabel, t }: { category: CategoryId; deviceLabel: string; t: Dict }) {
+  const c = t.category;
   const rows = [
-    { k: "Model", v: deviceLabel },
-    { k: "Storage & carrier", v: "Your configuration" },
-    { k: "Condition", v: "A few quick questions" },
+    { k: c.teaserModel, v: deviceLabel },
+    { k: c.teaserConfig, v: c.teaserConfigValue },
+    { k: c.teaserCondition, v: c.teaserConditionValue },
   ];
   return (
     <div className="relative mx-auto w-full max-w-md">
@@ -37,7 +39,7 @@ export function HeroTeaser({ category, deviceLabel }: { category: CategoryId; de
         <div className="flex items-center gap-5">
           <DeviceArt category={category} className="h-28 shrink-0 md:h-32" />
           <div>
-            <p className="eyebrow">Your trade</p>
+            <p className="eyebrow">{c.teaserEyebrow}</p>
             <p className="font-display mt-1 text-xl font-extrabold">{deviceLabel}</p>
           </div>
         </div>

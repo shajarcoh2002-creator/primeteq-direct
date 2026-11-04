@@ -8,6 +8,7 @@ import { parseVariantId } from "@/data/catalog";
 import { requireAdmin } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
 import { orderConfirmationEmail, shippingLabelEmail } from "@/lib/emails";
+import { notifyNewOrder } from "@/lib/whatsapp";
 import {
   type OrderStatus,
   STATUS_LABELS,
@@ -85,6 +86,21 @@ export async function resendConfirmation(form: FormData) {
   });
   await saveOrder(order);
   redirect(`/admin/orders/${order.id}?confirmation=${sent.ok ? "sent" : "failed"}`);
+}
+
+/** Re-sends the automatic WhatsApp alert to the manager. */
+export async function resendWhatsapp(form: FormData) {
+  await requireAdmin();
+  const order = await getOrder(String(form.get("id")));
+  if (!order) return;
+  const wa = await notifyNewOrder(order).catch((e) => ({ ok: false, detail: String(e) }));
+  order.history.push({
+    at: new Date().toISOString(),
+    status: order.status,
+    note: wa.ok ? `WhatsApp alert re-sent to manager (${wa.detail})` : `WhatsApp alert NOT sent: ${wa.detail}`,
+  });
+  await saveOrder(order);
+  redirect(`/admin/orders/${order.id}?whatsapp=${wa.ok ? "sent" : "failed"}`);
 }
 
 // ---------- Pricing formula ----------

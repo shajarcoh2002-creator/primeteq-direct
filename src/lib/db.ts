@@ -1,5 +1,6 @@
 import { randomBytes } from "crypto";
 import type { CarrierId } from "@/data/catalog";
+import type { Lang } from "@/i18n/config";
 import { parseVariantId } from "@/data/catalog";
 import { findOrder, getDoc, listOrders, setDoc, upsertOrder } from "./store";
 import {
@@ -69,6 +70,7 @@ export async function saveCalibrationRefs(refs: CalibrationRef[]) {
 
 export type OrderStatus =
   | "awaiting_device"
+  | "awaiting_dropoff"
   | "label_sent"
   | "received"
   | "inspecting"
@@ -81,6 +83,7 @@ export type OrderStatus =
 /** `en` = what the customer sees; `admin` = the internal label in the admin panel. */
 export const STATUS_LABELS: Record<OrderStatus, { en: string; admin: string }> = {
   awaiting_device: { en: "Preparing your shipping label", admin: "Awaiting label" },
+  awaiting_dropoff: { en: "Waiting for your drop-off", admin: "Awaiting drop-off (PA)" },
   label_sent: { en: "Shipping label sent — waiting for your device", admin: "Label sent" },
   received: { en: "Device received", admin: "Received" },
   inspecting: { en: "Inspecting", admin: "Inspecting" },
@@ -91,18 +94,32 @@ export const STATUS_LABELS: Record<OrderStatus, { en: string; admin: string }> =
   cancelled: { en: "Cancelled", admin: "Cancelled" },
 };
 
-// "check" is kept only so older orders still type-check; new orders use PayPal or Zelle.
-export type PayoutMethod = "paypal" | "zelle" | "check";
+// "check" is kept only so older orders still type-check. U.S.: PayPal / Zelle. Panama: Yappy / ACH.
+export type PayoutMethod = "paypal" | "zelle" | "yappy" | "ach" | "check";
+export type Country = "US" | "PA";
+export const PAYOUTS_BY_COUNTRY: Record<Country, PayoutMethod[]> = { US: ["paypal", "zelle"], PA: ["yappy", "ach"] };
+export const PAYOUT_LABELS: Record<PayoutMethod, string> = { paypal: "PayPal", zelle: "Zelle", yappy: "Yappy", ach: "ACH", check: "Check" };
+/** Orders created before Panama existed have no country: they're U.S. orders. */
+export const orderCountry = (o: Order): Country => o.country ?? "US";
 
 export interface Order {
   id: string;
   createdAt: string;
   expiresAt: string;
   status: OrderStatus;
+  /** Where the customer sells from. Missing on older orders (= US). */
+  country?: Country;
+  /** Language the customer used on the site; emails are sent in it. Missing = English. */
+  lang?: Lang;
+  /** Panama only: the drop-off location id (see lib/locations.ts). U.S. orders ship with a prepaid label. */
+  dropoff?: { locationId: string };
   customer: { name: string; email: string; phone: string };
   address: { line1: string; line2: string; city: string; state: string; zip: string };
-  /** handle = PayPal email, or Zelle email / US mobile number. accountName = name on the Zelle-enrolled bank account. */
-  payout: { method: PayoutMethod; handle: string; accountName?: string };
+  /**
+   * handle = PayPal email, Zelle email / US mobile, Yappy mobile, or ACH account number.
+   * accountName = name on the Zelle / Yappy / bank account. bank + accountType: ACH only.
+   */
+  payout: { method: PayoutMethod; handle: string; accountName?: string; bank?: string; accountType?: "savings" | "checking" };
   item: {
     variantId: string;
     modelName: string;

@@ -1,4 +1,7 @@
+import type { Dict } from "@/i18n/en";
+
 // Commercial terms used across the policy pages and FAQs. Change them here and every page updates.
+// Wording that depends on the language (e.g. "1 business day") lives in the dictionaries under `policy`.
 // The offer validity period itself comes from the admin pricing settings (offerValidDays).
 export const POLICY = {
   effectiveDate: "October 16, 2026",
@@ -8,7 +11,10 @@ export const POLICY = {
   paymentWithin: "2 business days",
   revisedOfferDays: 14,
   marketDropPct: 30,
-  serviceArea: "the United States",
+  serviceArea: "the United States and Panama",
   minAge: 18,
-  payoutMethods: "PayPal or Zelle",
+  payoutMethods: "PayPal or Zelle (U.S.) and Yappy or ACH bank transfer (Panama)",
 };
+
+/** POLICY with the wording in the visitor's language. */
+export const policyFor = (t: Dict) => ({ ...POLICY, ...t.policy });

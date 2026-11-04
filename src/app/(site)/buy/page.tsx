@@ -1,17 +1,20 @@
 import { ComingSoon } from "@/components/ComingSoon";
+import { getDict } from "@/i18n/server";
 
-export const metadata = { title: "Buy — Coming soon" };
+export async function generateMetadata() {
+  return { title: (await getDict()).meta.buy };
+}
 
-export default function BuyPage() {
+export default async function BuyPage() {
+  const t = await getDict();
   return (
     <ComingSoon
-      section="Buy"
       title={
         <>
-          Shop tech from <span className="text-brand">Prime Teq</span>.
+          {t.soon.titleA} <span className="text-brand">{t.soon.titleB}</span>.
         </>
       }
-      body="We’re getting this section ready. Soon you’ll be able to buy devices here."
+      body={t.soon.body}
     />
   );
 }

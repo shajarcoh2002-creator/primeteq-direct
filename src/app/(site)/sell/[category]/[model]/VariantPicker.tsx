@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, Info } from "lucide-react";
-import { CARRIER_LABELS, type CarrierId, type CategoryId, variantId } from "@/data/catalog";
+import { type CarrierId, type CategoryId, variantId } from "@/data/catalog";
+import { fmt } from "@/i18n/config";
+import { useI18n } from "@/i18n/client";
 import { QuoteSummary } from "@/components/QuoteSummary";
 
 interface Props {
@@ -22,7 +24,9 @@ export function VariantPicker({ category, modelSlug, modelName, photo, carriers,
   const [carrier, setCarrier] = useState<CarrierId | null>(null);
   const [size, setSize] = useState<string | null>(null);
   const [tried, setTried] = useState(false);
-  const carrierTitle = kind === "tablet" ? "Connectivity" : "Carrier";
+  const { t } = useI18n();
+  const p = t.picker;
+  const carrierTitle = kind === "tablet" ? p.connectivity : p.carrier;
 
   const go = () => {
     if (!carrier || !size) {
@@ -36,10 +40,10 @@ export function VariantPicker({ category, modelSlug, modelName, photo, carriers,
     <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
       <div className="card p-5 md:p-8">
         <Link href={`/sell/${category}#models`} className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted hover:text-ink">
-          <ArrowLeft className="h-4 w-4" /> Change model
+          <ArrowLeft className="h-4 w-4" /> {p.changeModel}
         </Link>
-        <h1 className="mt-4 text-[28px] font-extrabold leading-tight md:text-4xl">Configure your {modelName}.</h1>
-        <p className="mt-2 text-muted">Tell us how your device is set up. You’ll see your offer in the next step.</p>
+        <h1 className="mt-4 text-[28px] font-extrabold leading-tight md:text-4xl">{fmt(p.title, { name: modelName })}</h1>
+        <p className="mt-2 text-muted">{p.lead}</p>
 
         <fieldset className="mt-8">
           <legend className="flex w-full items-baseline justify-between gap-3">
@@ -50,7 +54,7 @@ export function VariantPicker({ category, modelSlug, modelName, photo, carriers,
           </legend>
           {kind === "phone" && (
             <p className="mt-1 flex items-start gap-1.5 text-sm text-muted">
-              <Info className="mt-0.5 h-4 w-4 shrink-0" /> Choose the carrier your phone is locked to, or “Unlocked” if it works with any carrier.
+              <Info className="mt-0.5 h-4 w-4 shrink-0" /> {p.carrierHelp}
             </p>
           )}
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3" role="radiogroup" aria-label={carrierTitle}>
@@ -66,22 +70,22 @@ export function VariantPicker({ category, modelSlug, modelName, photo, carriers,
                 onClick={() => setCarrier(c)}
               >
                 <span className="option-dot" aria-hidden />
-                {CARRIER_LABELS[c]}
+                {t.carriers[c]}
               </button>
             ))}
           </div>
-          {tried && !carrier && <p className="mt-2 text-sm font-medium text-danger">Please choose a {carrierTitle.toLowerCase()}.</p>}
+          {tried && !carrier && <p className="mt-2 text-sm font-medium text-danger">{kind === "tablet" ? p.chooseConnectivity : p.chooseCarrier}</p>}
         </fieldset>
 
         <fieldset className="mt-8">
           <legend className="font-display text-lg font-bold">
-            <span className="mr-2 text-brand">B.</span>Storage
+            <span className="mr-2 text-brand">B.</span>{p.storage}
           </legend>
           <p className="mt-1 flex items-start gap-1.5 text-sm text-muted">
-            <Info className="mt-0.5 h-4 w-4 shrink-0" /> Find it in{" "}
-            {category === "iphone" || category === "ipad" ? "Settings → General → About → Capacity" : "Settings → Storage"}.
+            <Info className="mt-0.5 h-4 w-4 shrink-0" />{" "}
+            {category === "iphone" || category === "ipad" ? p.storageHelpApple : p.storageHelpAndroid}
           </p>
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4" role="radiogroup" aria-label="Storage">
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4" role="radiogroup" aria-label={p.storage}>
             {storage.map((s) => (
               <button
                 key={s}
@@ -97,15 +101,15 @@ export function VariantPicker({ category, modelSlug, modelName, photo, carriers,
               </button>
             ))}
           </div>
-          {tried && !size && <p className="mt-2 text-sm font-medium text-danger">Please choose a storage size.</p>}
+          {tried && !size && <p className="mt-2 text-sm font-medium text-danger">{p.chooseStorage}</p>}
         </fieldset>
 
         <div className="mt-10 flex flex-col-reverse gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
           <Link href={`/sell/${category}#models`} className="btn btn-secondary">
-            <ArrowLeft className="h-4 w-4" /> Back
+            <ArrowLeft className="h-4 w-4" /> {p.back}
           </Link>
           <button type="button" onClick={go} className="btn btn-primary px-8" aria-disabled={!carrier || !size}>
-            Continue <ArrowRight className="h-4 w-4" />
+            {p.continue} <ArrowRight className="h-4 w-4" />
           </button>
         </div>
       </div>
@@ -115,11 +119,11 @@ export function VariantPicker({ category, modelSlug, modelName, photo, carriers,
         photo={photo}
         title={modelName}
         rows={[
-          { label: carrierTitle, value: carrier ? CARRIER_LABELS[carrier] : null },
-          { label: "Storage", value: size },
-          { label: "Condition", value: null },
+          { label: carrierTitle, value: carrier ? t.carriers[carrier] : null },
+          { label: p.storage, value: size },
+          { label: p.condition, value: null },
         ]}
-        footer="Your offer appears once you describe the condition."
+        footer={p.summaryFooter}
       />
     </div>
   );

@@ -2,21 +2,20 @@ import Link from "next/link";
 import { CONTACT } from "@/lib/contact";
 import { HashOpener } from "./HashOpener";
 import { InstagramIcon } from "./InstagramIcon";
+import { rich } from "@/i18n/rich";
+import { getDict } from "@/i18n/server";
 import { ClipboardCheck, ListChecks, PackageOpen, Route, ShieldCheck, Smartphone, Workflow, X } from "lucide-react";
 
-export function HowItWorks() {
-  const steps = [
-    { icon: Smartphone, title: "Select your device", body: "Choose the brand, model, storage and carrier of the device you want to sell." },
-    { icon: ClipboardCheck, title: "Review your offer", body: "Answer a few questions about its condition and see your offer as you go." },
-    { icon: PackageOpen, title: "Follow the instructions", body: "Accept your offer and we’ll send the next steps to prepare and send your device." },
-    { icon: Workflow, title: "Complete your trade", body: "Once your device is checked, we finalize your trade with the payment method you chose." },
-  ];
+export async function HowItWorks() {
+  const t = await getDict();
+  const icons = [Smartphone, ClipboardCheck, PackageOpen, Workflow];
+  const steps = t.how.steps.map((s, i) => ({ ...s, icon: icons[i] }));
   return (
     <section id="how-it-works" className="scroll-mt-28 bg-white">
       <div className="container-page py-12 md:py-24">
         <div className="max-w-2xl">
-          <p className="eyebrow">How it works</p>
-          <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">Four steps, start to finish.</h2>
+          <p className="eyebrow">{t.how.eyebrow}</p>
+          <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">{t.how.title}</h2>
         </div>
         <ol className="mt-8 grid gap-6 sm:mt-12 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4">
           {steps.map((s, i) => (
@@ -38,8 +37,8 @@ export function HowItWorks() {
           ))}
         </ol>
         <p className="mt-8 text-sm text-muted sm:mt-10">
-          Shipping is free and you’re paid by PayPal or Zelle.{" "}
-          <Link href="/shipping-payments" className="font-semibold text-brand hover:underline">Shipping &amp; Payments details</Link>
+          {t.how.note}{" "}
+          <Link href="/shipping-payments" className="font-semibold text-brand hover:underline">{t.how.noteLink}</Link>
         </p>
       </div>
     </section>
@@ -47,31 +46,25 @@ export function HowItWorks() {
 }
 
 /** Eligibility, in plain words — mirrors the “Eligible devices” section of the Terms. */
-export function NotAccepted() {
-  const items = [
-    "Lost or stolen devices",
-    "Unpaid financing or balance",
-    "Find My / account lock turned on",
-    "Modified or counterfeit parts",
-    "Accessories (cases, chargers, boxes)",
-    "Sellers outside the U.S.",
-  ];
+export async function NotAccepted() {
+  const t = await getDict();
+  const items = t.notAccepted.items;
   return (
     <section id="not-accepted" className="scroll-mt-28 bg-white">
       <div className="container-page pb-12 md:pb-20">
         <div className="grid gap-5 rounded-2xl border border-line bg-paper p-5 md:grid-cols-[260px_1fr] md:gap-8 md:p-7">
           <div>
-            <h2 className="text-xl font-extrabold md:text-2xl">What we don’t accept</h2>
+            <h2 className="text-xl font-extrabold md:text-2xl">{t.notAccepted.title}</h2>
             <p className="mt-1.5 text-sm text-muted">
-              Broken or cracked devices are fine — they just get a lower offer.{" "}
-              <Link href="/terms#s2" className="font-semibold text-brand hover:underline">Details</Link>
+              {t.notAccepted.lead}{" "}
+              <Link href="/terms#s2" className="font-semibold text-brand hover:underline">{t.notAccepted.details}</Link>
             </p>
           </div>
           <ul className="grid gap-x-6 gap-y-2.5 text-[15px] text-ink-2 sm:grid-cols-2">
-            {items.map((t) => (
-              <li key={t} className="flex items-center gap-2.5">
+            {items.map((item) => (
+              <li key={item} className="flex items-center gap-2.5">
                 <X className="h-4 w-4 shrink-0 text-muted" strokeWidth={2.25} aria-hidden />
-                {t}
+                {item}
               </li>
             ))}
           </ul>
@@ -81,18 +74,16 @@ export function NotAccepted() {
   );
 }
 
-export function TrustGrid() {
-  const items = [
-    { icon: ListChecks, title: "Clear steps", body: "One question at a time, with your progress always visible." },
-    { icon: Route, title: "Straightforward process", body: "From model to offer in a single, guided flow — no listings to create." },
-    { icon: ShieldCheck, title: "Trade with confidence", body: "Your offer, your device details and your order status, all in one place." },
-  ];
+export async function TrustGrid() {
+  const t = await getDict();
+  const icons = [ListChecks, Route, ShieldCheck];
+  const items = t.trust.items.map((it, i) => ({ ...it, icon: icons[i] }));
   return (
     <section className="bg-paper">
       <div className="container-page py-12 md:py-24">
         <div className="max-w-2xl">
-          <p className="eyebrow">Why Prime Teq</p>
-          <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">Selling tech, made simple.</h2>
+          <p className="eyebrow">{t.trust.eyebrow}</p>
+          <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">{t.trust.title}</h2>
         </div>
         <div className="mt-8 grid gap-3 sm:mt-12 sm:gap-4 md:grid-cols-3">
           {items.map((it) => (
@@ -114,17 +105,20 @@ export interface FaqItem {
   a: React.ReactNode;
 }
 
-export function Faq({ items, title = "Questions, answered." }: { items: FaqItem[]; title?: string }) {
+export async function Faq({ items, title }: { items: FaqItem[]; title?: string }) {
+  const t = await getDict();
+  const [beforeIg] = t.faq.help.split("Instagram");
   return (
     <section id="faq" className="scroll-mt-28 bg-white">
       <HashOpener />
       <div className="container-page grid gap-8 py-12 md:gap-10 md:py-24 lg:grid-cols-[1fr_1.6fr]">
         <div>
-          <p className="eyebrow">FAQ</p>
-          <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">{title}</h2>
+          <p className="eyebrow">{t.faq.eyebrow}</p>
+          <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">{title ?? t.faq.title}</h2>
           <p className="mt-4 text-muted">
-            Still need help? Email{" "}
-            <a href={`mailto:${CONTACT.email}`} className="font-semibold text-brand hover:underline">{CONTACT.email}</a> or message us on{" "}
+            {rich(beforeIg, {
+              email: <a href={`mailto:${CONTACT.email}`} className="font-semibold text-brand hover:underline">{CONTACT.email}</a>,
+            })}
             <a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-brand hover:underline">
               <InstagramIcon className="h-3.5 w-3.5" /> Instagram
             </a>
@@ -152,12 +146,13 @@ export function Faq({ items, title = "Questions, answered." }: { items: FaqItem[
   );
 }
 
-export function ClosingCta({ href, label }: { href: string; label: string }) {
+export async function ClosingCta({ href, label }: { href: string; label: string }) {
+  const t = await getDict();
   return (
     <section className="relative overflow-hidden bg-ink text-white">
       <span aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full border-[28px] border-brand/70" />
       <div className="container-page relative flex flex-col items-start gap-6 py-14 md:flex-row md:items-center md:justify-between md:py-16">
-        <h2 className="max-w-xl text-3xl font-extrabold md:text-[40px] md:leading-tight">Your next move starts here.</h2>
+        <h2 className="max-w-xl text-3xl font-extrabold md:text-[40px] md:leading-tight">{t.cta.title}</h2>
         <Link href={href} className="btn btn-on-dark px-7">
           {label}
         </Link>

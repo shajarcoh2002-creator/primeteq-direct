@@ -4,34 +4,36 @@ import { Mail } from "lucide-react";
 import { CONTACT } from "@/lib/contact";
 import { InstagramIcon } from "./InstagramIcon";
 import { Logo } from "./Logo";
+import { fmt } from "@/i18n/config";
+import { getDict } from "@/i18n/server";
 
-const COLUMNS = [
-  { title: "Sell", links: CATEGORIES.map((c) => ({ label: `Sell ${c.name}`, href: `/sell/${c.id}` })) },
-  {
-    title: "Support",
-    links: [
-      { label: "How It Works", href: "/#how-it-works" },
-      { label: "Track Offer", href: "/track" },
-      { label: "FAQ", href: "/#faq" },
-    ],
-  },
-  {
-    title: "Policies",
-    links: [
-      { label: "Terms of Service", href: "/terms" },
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Shipping & Payments", href: "/shipping-payments" },
-    ],
-  },
-];
-
-export function SiteFooter() {
+export async function SiteFooter() {
+  const t = await getDict();
+  const COLUMNS = [
+    { title: t.footer.sell, links: CATEGORIES.map((c) => ({ label: fmt(t.home.sell, { name: c.name }), href: `/sell/${c.id}` })) },
+    {
+      title: t.footer.support,
+      links: [
+        { label: t.nav.howItWorks, href: "/#how-it-works" },
+        { label: t.nav.trackOffer, href: "/track" },
+        { label: t.footer.faq, href: "/#faq" },
+      ],
+    },
+    {
+      title: t.footer.policies,
+      links: [
+        { label: t.footer.terms, href: "/terms" },
+        { label: t.footer.privacy, href: "/privacy" },
+        { label: t.footer.shipping, href: "/shipping-payments" },
+      ],
+    },
+  ];
   return (
     <footer className="border-t border-line bg-white">
       <div className="container-page grid grid-cols-2 gap-x-6 gap-y-9 py-10 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-10 md:py-14">
         <div className="col-span-2 space-y-4 md:col-span-1">
           <Logo className="h-7 w-auto" />
-          <p className="max-w-xs text-sm text-muted">Buy, sell, trade and upgrade your tech.</p>
+          <p className="max-w-xs text-sm text-muted">{t.footer.tagline}</p>
           <div className="space-y-2 text-sm">
             <a href={`https://${CONTACT.website}`} className="block font-semibold text-ink hover:text-brand">{CONTACT.website}</a>
             <a href={`mailto:${CONTACT.email}`} className="flex items-center gap-2 text-muted hover:text-brand">
@@ -59,8 +61,8 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-line">
         <div className="container-page flex flex-wrap items-center justify-between gap-2 py-5 text-xs text-muted">
-          <span>© {new Date().getFullYear()} Prime Teq. All rights reserved.</span>
-          <span>iPhone and iPad are trademarks of Apple Inc. Other product names belong to their respective owners.</span>
+          <span>© {new Date().getFullYear()} Prime Teq. {t.footer.rights}</span>
+          <span>{t.footer.trademarks}</span>
         </div>
       </div>
     </footer>

@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CARRIER_LABELS } from "@/data/catalog";
-import { type OrderStatus, STATUS_LABELS, getOrder } from "@/lib/db";
+import { type OrderStatus, PAYOUT_LABELS, STATUS_LABELS, getOrder, orderCountry } from "@/lib/db";
+import { getLocation, locationLine } from "@/lib/locations";
+import { whatsappConfigured, whatsappShareUrl } from "@/lib/whatsapp";
 import { CONDITION_LABELS } from "@/lib/pricing";
 import { emailConfigured } from "@/lib/email";
-import { resendConfirmation, sendLabel, updateOrder } from "../../../actions";
+import { resendConfirmation, resendWhatsapp, sendLabel, updateOrder } from "../../../actions";
 import { CopyAddress } from "./CopyAddress";
 
 const yn = (v: boolean) => (v ? "Yes" : "No");
@@ -14,6 +16,9 @@ export default async function AdminOrderPage({ params, searchParams }: PageProps
   if (!order) notFound();
   const sp = await searchParams;
   const { item, customer, address, payout } = order;
+  const pa = orderCountry(order) === "PA";
+  const loc = getLocation(order.dropoff?.locationId);
+  const waConfigured = whatsappConfigured();
   const addressText = [customer.name, address.line1, address.line2, `${address.city}, ${address.state} ${address.zip}`].filter(Boolean).join("\n");
   const notice =
     sp.label === "sent" ? { ok: true, text: `Label emailed to ${customer.email}.` }
@@ -21,6 +26,8 @@ export default async function AdminOrderPage({ params, searchParams }: PageProps
     : sp.label === "invalid" ? { ok: false, text: "Paste the full label link, starting with https://" }
     : sp.confirmation === "sent" ? { ok: true, text: "Confirmation email re-sent." }
     : sp.confirmation === "failed" ? { ok: false, text: "Confirmation email could not be sent." }
+    : sp.whatsapp === "sent" ? { ok: true, text: "WhatsApp alert sent to the manager." }
+    : sp.whatsapp === "failed" ? { ok: false, text: "WhatsApp alert could not be sent — see History for the reason." }
     : null;
 
   return (
@@ -33,7 +40,10 @@ export default async function AdminOrderPage({ params, searchParams }: PageProps
             Created {new Date(order.createdAt).toLocaleString("en-US")} · Offer valid until {new Date(order.expiresAt).toLocaleDateString("en-US")}
           </p>
         </div>
-        <span className="rounded-full bg-brand-soft px-3 py-1 text-sm font-semibold text-brand">{STATUS_LABELS[order.status].admin}</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-paper px-3 py-1 text-sm font-semibold ring-1 ring-line">{pa ? "🇵🇦 Panama · drop-off" : "🇺🇸 U.S. · shipping"}</span>
+          <span className="rounded-full bg-brand-soft px-3 py-1 text-sm font-semibold text-brand">{STATUS_LABELS[order.status].admin}</span>
+        </div>
       </div>
 
       {notice && (
@@ -45,6 +55,46 @@ export default async function AdminOrderPage({ params, searchParams }: PageProps
         </p>
       )}
 
+      <section className="rounded-2xl border border-line bg-white p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="font-bold">WhatsApp summary</h2>
+            <p className="mt-1 text-sm text-muted">
+              {waConfigured
+                ? "An alert with this order’s summary is sent to the manager automatically when the order comes in."
+                : "Automatic alerts aren’t connected yet (WHATSAPP_TOKEN / WHATSAPP_PHONE_NUMBER_ID / WHATSAPP_NOTIFY_TO). Use the button to send the summary yourself."}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <a href={whatsappShareUrl(order)} target="_blank" rel="noopener noreferrer" className="btn btn-outline !min-h-10 !px-4 !py-2 text-sm">
+              Send summary by WhatsApp ↗
+            </a>
+            {waConfigured && (
+              <form action={resendWhatsapp}>
+                <input type="hidden" name="id" value={order.id} />
+                <button className="btn btn-outline !min-h-10 !px-4 !py-2 text-sm">Resend automatic alert</button>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {pa ? (
+      <section className="rounded-2xl border border-line bg-white p-5">
+        <h2 className="font-bold">Drop-off (Panama)</h2>
+        <p className="mt-1 text-sm text-ink-2">
+          {loc ? locationLine(loc, "es") : `Unknown location (${order.dropoff?.locationId ?? "—"})`}
+        </p>
+        <p className="mt-1 text-sm text-muted">
+          No shipping label for Panama. When the customer brings the device, set the status to <strong>Received</strong> below.
+          {customer.phone && <> Customer WhatsApp: <a className="font-semibold text-brand hover:underline" href={`https://wa.me/${customer.phone.replace(/\D/g, "").replace(/^(?=\d{8}$)/, "507")}`} target="_blank" rel="noopener noreferrer">{customer.phone} ↗</a></>}
+        </p>
+        <form action={resendConfirmation} className="mt-3">
+          <input type="hidden" name="id" value={order.id} />
+          <button className="text-sm font-semibold text-muted hover:text-ink">Resend order confirmation email</button>
+        </form>
+      </section>
+      ) : (
       <section className="rounded-2xl border border-line bg-white p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -91,6 +141,7 @@ export default async function AdminOrderPage({ params, searchParams }: PageProps
           <button className="text-sm font-semibold text-muted hover:text-ink">Resend order confirmation email</button>
         </form>
       </section>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-3">
         <section className="rounded-2xl border border-line bg-white p-5">
@@ -115,13 +166,24 @@ export default async function AdminOrderPage({ params, searchParams }: PageProps
             <p className="font-semibold">{customer.name}</p>
             <p>{customer.email}</p>
             {customer.phone && <p>{customer.phone}</p>}
-            <p className="pt-2 text-muted">Address (shipping label)</p>
-            <p>{address.line1}{address.line2 ? `, ${address.line2}` : ""}</p>
-            <p>{address.city}, {address.state} {address.zip}</p>
+            <p className="pt-2 text-muted">Customer language: {order.lang === "es" ? "Spanish" : "English"}</p>
+            {pa ? (
+              <>
+                <p className="pt-2 text-muted">Drop-off</p>
+                <p>{loc?.name ?? order.dropoff?.locationId}</p>
+              </>
+            ) : (
+              <>
+                <p className="pt-2 text-muted">Address (shipping label)</p>
+                <p>{address.line1}{address.line2 ? `, ${address.line2}` : ""}</p>
+                <p>{address.city}, {address.state} {address.zip}</p>
+              </>
+            )}
             <p className="pt-2 text-muted">Payout</p>
             <p className="font-semibold">
-              {payout.method === "check" ? "Check by mail" : `${payout.method === "paypal" ? "PayPal" : "Zelle"}: ${payout.handle}`}
+              {payout.method === "check" ? "Check by mail" : `${PAYOUT_LABELS[payout.method]}${payout.method === "ach" ? " account" : ""}: ${payout.handle}`}
             </p>
+            {payout.bank && <p>Bank: {payout.bank}{payout.accountType ? ` · ${payout.accountType === "savings" ? "Savings" : "Checking"}` : ""}</p>}
             {payout.accountName && <p>Name on account: {payout.accountName}</p>}
           </div>
         </section>

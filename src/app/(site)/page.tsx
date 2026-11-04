@@ -5,8 +5,11 @@ import { DeviceArt } from "@/components/DeviceArt";
 import { FlowBar } from "@/components/FlowBar";
 import { ClosingCta, Faq, HowItWorks, NotAccepted, TrustGrid } from "@/components/sections";
 import { sellFaqs } from "@/components/faqs";
+import { fmt } from "@/i18n/config";
+import { getDict } from "@/i18n/server";
 
-export default function Home() {
+export default async function Home() {
+  const t = await getDict();
   return (
     <>
       <FlowBar current={0} />
@@ -15,9 +18,9 @@ export default function Home() {
         <span aria-hidden className="pointer-events-none absolute -right-28 -top-28 hidden h-96 w-96 rounded-full border-[34px] border-brand/90 lg:block" />
         <div className="container-page relative py-9 md:py-16 lg:py-20">
           <h1 className="max-w-3xl text-[34px] font-extrabold leading-[1.05] sm:text-5xl lg:text-[60px]">
-            Sell your <span className="text-brand">device</span>.
+            {t.home.titleA} <span className="text-brand">{t.home.titleB}</span>.
           </h1>
-          <p className="mt-3 max-w-md text-base text-muted sm:mt-5 sm:text-lg">Pick your brand, find your model and see your offer.</p>
+          <p className="mt-3 max-w-md text-base text-muted sm:mt-5 sm:text-lg">{t.home.lead}</p>
 
           <div id="choose" className="mt-8 grid scroll-mt-28 gap-2.5 sm:mt-10 sm:grid-cols-2 sm:gap-3 md:gap-4 lg:grid-cols-4">
             {CATEGORIES.map((c) => (
@@ -29,9 +32,9 @@ export default function Home() {
                 <DeviceArt category={c.id} className="h-14 shrink-0 sm:h-24 md:h-28" />
                 <span className="min-w-0 flex-1">
                   <span className="font-display block text-lg font-extrabold sm:mt-5 md:text-xl">{c.name}</span>
-                  <span className="block text-sm text-muted sm:mt-1">{modelsIn(c.id).length} models</span>
+                  <span className="block text-sm text-muted sm:mt-1">{fmt(t.home.models, { n: modelsIn(c.id).length })}</span>
                   <span className="mt-4 hidden items-center gap-1.5 text-sm font-semibold text-brand sm:flex">
-                    Sell {c.shortName} <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                    {fmt(t.home.sell, { name: c.shortName })} <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
                   </span>
                 </span>
                 <ArrowRight className="h-5 w-5 shrink-0 text-brand sm:hidden" />
@@ -44,8 +47,8 @@ export default function Home() {
       <HowItWorks />
       <NotAccepted />
       <TrustGrid />
-      <Faq items={sellFaqs(null)} />
-      <ClosingCta href="/sell/iphone" label="Choose your iPhone" />
+      <Faq items={sellFaqs(t, null)} />
+      <ClosingCta href="/sell/iphone" label={t.cta.chooseIphone} />
     </>
   );
 }

@@ -8,20 +8,23 @@ import { HeroTeaser } from "@/components/DeviceArt";
 import { FlowBar } from "@/components/FlowBar";
 import { ClosingCta, Faq, HowItWorks, TrustGrid } from "@/components/sections";
 import { sellFaqs } from "@/components/faqs";
+import { fmt } from "@/i18n/config";
+import { getDict } from "@/i18n/server";
 import { ModelGrid } from "./ModelGrid";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: PageProps<"/sell/[category]">) {
   const category = getCategory((await params).category);
-  return { title: category ? `Sell your ${category.name}` : "Sell" };
+  const t = await getDict();
+  return { title: category ? fmt(t.meta.sellCategory, { name: category.name }) : t.nav.sell };
 }
 
 export default async function CategoryPage({ params }: PageProps<"/sell/[category]">) {
   const category = getCategory((await params).category);
   if (!category) notFound();
 
-  const [settings, overrides, photos] = await Promise.all([getSettings(), getOverrides(), getDevicePhotos()]);
+  const [settings, overrides, photos, t] = await Promise.all([getSettings(), getOverrides(), getDevicePhotos(), getDict()]);
   const best = category.carriers.includes("unlocked") ? "unlocked" : "cellular";
   const models = modelsIn(category.id).map((m) => ({
     slug: m.slug,
@@ -40,18 +43,18 @@ export default async function CategoryPage({ params }: PageProps<"/sell/[categor
         <div className="container-page grid items-center gap-12 py-10 md:py-12 lg:grid-cols-[1.15fr_1fr] lg:py-14">
           <div>
             <h1 className="text-[34px] font-extrabold leading-[1.05] sm:text-5xl lg:text-[60px]">
-              Sell your <span className="text-brand">{category.name}</span>.
+              {t.category.titleA} <span className="text-brand">{category.name}</span>.
             </h1>
-            <p className="mt-5 max-w-md text-lg text-muted">Find your model and see your offer.</p>
+            <p className="mt-5 max-w-md text-lg text-muted">{t.category.lead}</p>
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-              <Link href="#models" className="btn btn-primary px-7">Choose your model</Link>
+              <Link href="#models" className="btn btn-primary px-7">{t.category.chooseModel}</Link>
               <Link href="#which-model" className="text-sm font-semibold text-ink underline decoration-line decoration-2 underline-offset-4 hover:decoration-brand">
-                Which model do I have?
+                {t.category.whichModel}
               </Link>
             </div>
           </div>
           <div className="hidden lg:block">
-            <HeroTeaser category={category.id} deviceLabel={category.name} />
+            <HeroTeaser category={category.id} deviceLabel={category.name} t={t} />
           </div>
         </div>
       </section>
@@ -64,8 +67,8 @@ export default async function CategoryPage({ params }: PageProps<"/sell/[categor
 
       <HowItWorks />
       <TrustGrid />
-      <Faq items={sellFaqs(category.id, settings.offerValidDays)} />
-      <ClosingCta href="#models" label={`Choose your ${category.name}`} />
+      <Faq items={sellFaqs(t, category.id, settings.offerValidDays)} />
+      <ClosingCta href="#models" label={fmt(t.cta.choose, { name: category.name })} />
     </>
   );
 }

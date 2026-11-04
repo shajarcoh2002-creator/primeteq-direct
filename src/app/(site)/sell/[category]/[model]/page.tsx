@@ -2,11 +2,14 @@ import { notFound } from "next/navigation";
 import { getCategory, getModel } from "@/data/catalog";
 import { FlowBar } from "@/components/FlowBar";
 import { getDevicePhoto } from "@/lib/photos";
+import { fmt } from "@/i18n/config";
+import { getDict } from "@/i18n/server";
 import { VariantPicker } from "./VariantPicker";
 
 export async function generateMetadata({ params }: PageProps<"/sell/[category]/[model]">) {
   const model = getModel((await params).model);
-  return { title: model ? `Sell your ${model.name}` : "Sell" };
+  const t = await getDict();
+  return { title: model ? fmt(t.meta.sellCategory, { name: model.name }) : t.nav.sell };
 }
 
 export default async function ModelPage({ params }: PageProps<"/sell/[category]/[model]">) {

@@ -71,3 +71,43 @@ Hay que hacer commit de `public/devices/` (y `src/data/photos.json`) para que ap
 - Etiquetas de envío prepagadas (EasyPost / Shippo) y emails automáticos.
 - Pagos (PayPal Payouts, Zelle, cheques) y verificación de IMEI / lista negra.
 - Revisión legal de términos y licencia de comprador de artículos usados.
+
+## Idiomas (español / inglés)
+
+El sitio abre en **español** por defecto; el selector **ES | EN** está arriba a la derecha (y en el menú del celular). La elección se guarda en una cookie (`ptd_lang`). Los textos están en `src/i18n/es.ts` y `src/i18n/en.ts` (mismas claves). Los correos al cliente salen en el idioma que usó en el sitio. El admin sigue en inglés.
+
+## Panamá: puntos de entrega, Yappy y ACH
+
+En el checkout el cliente elige **Panamá** o **Estados Unidos**:
+
+- **Panamá:** no hay envío. Elige un punto de entrega y se le paga por **Yappy** o **ACH** (banco, tipo de cuenta, número y titular). La orden queda en *Awaiting drop-off (PA)*.
+- **EE. UU.:** etiqueta de envío gratis y pago por PayPal o Zelle (igual que antes).
+
+Los puntos de entrega (nombre, dirección, zona, horario) se editan en `src/lib/locations.ts`.
+
+## Aviso por WhatsApp al encargado
+
+En cada orden nueva se envía automáticamente un resumen (equipo, oferta, cliente, contacto, pago, entrega y link al admin) por la **WhatsApp Cloud API de Meta**. Variables en Vercel:
+
+| Variable | Qué es |
+| --- | --- |
+| `WHATSAPP_TOKEN` | Token permanente del usuario del sistema en Meta Business |
+| `WHATSAPP_PHONE_NUMBER_ID` | ID del número de WhatsApp Business que envía |
+| `WHATSAPP_NOTIFY_TO` | Número(s) del encargado, formato internacional sin `+`, separados por coma (ej. `50761234567`) |
+| `WHATSAPP_TEMPLATE` | Nombre de la plantilla aprobada (ej. `nueva_orden`) |
+| `WHATSAPP_TEMPLATE_LANG` | Idioma de la plantilla (por defecto `es`) |
+
+La plantilla (categoría *Utility*) debe tener exactamente 8 variables en este orden:
+
+```
+Nueva orden {{1}}
+Equipo: {{2}}
+Oferta: {{3}}
+Cliente: {{4}}
+Contacto: {{5}}
+Pago: {{6}}
+Entrega: {{7}}
+Ver: {{8}}
+```
+
+Mientras no esté configurado, cada orden en el admin tiene el botón **Send summary by WhatsApp**, que abre WhatsApp con el resumen listo para enviar. `/api/health` muestra `whatsappConfigured`.

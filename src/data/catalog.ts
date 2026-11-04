@@ -3,7 +3,7 @@
 
 export type CategoryId = "iphone" | "samsung" | "google" | "ipad";
 export type CurveId = "apple-phone" | "samsung" | "google" | "apple-tablet";
-export type CarrierId = "unlocked" | "att" | "tmobile" | "verizon" | "other" | "wifi" | "cellular";
+export type CarrierId = "unlocked" | "att" | "tmobile" | "verizon" | "masmovil" | "tigo" | "other" | "wifi" | "cellular";
 
 export interface StorageOption {
   label: string;
@@ -28,7 +28,8 @@ export interface Category {
   carriers: CarrierId[];
 }
 
-const PHONE_CARRIERS: CarrierId[] = ["att", "tmobile", "verizon", "unlocked", "other"];
+// US carriers, then Panama carriers (Más Móvil, Tigo), then Unlocked / Other.
+const PHONE_CARRIERS: CarrierId[] = ["att", "tmobile", "verizon", "masmovil", "tigo", "unlocked", "other"];
 
 export const CATEGORIES: Category[] = [
   { id: "iphone", name: "iPhone", shortName: "iPhone", kind: "phone", carriers: PHONE_CARRIERS },
@@ -41,6 +42,8 @@ export const CARRIER_LABELS: Record<CarrierId, string> = {
   att: "AT&T",
   tmobile: "T-Mobile",
   verizon: "Verizon",
+  masmovil: "Más Móvil",
+  tigo: "Tigo",
   unlocked: "Unlocked",
   other: "Other carrier",
   wifi: "Wi-Fi only",

@@ -1,4 +1,7 @@
+"use client";
+
 import type { CategoryId } from "@/data/catalog";
+import { useI18n } from "@/i18n/client";
 import { DevicePhoto } from "./DevicePhoto";
 
 export interface SummaryRow {
@@ -24,9 +27,10 @@ export function QuoteSummary({
   footer?: React.ReactNode;
   children?: React.ReactNode;
 }) {
+  const { t } = useI18n();
   return (
     <aside className="card h-fit p-6 lg:sticky lg:top-28">
-      <p className="eyebrow">Your trade</p>
+      <p className="eyebrow">{t.summary.eyebrow}</p>
       <div className="mt-4 flex items-center gap-4">
         <DevicePhoto category={category} photo={photo} alt={title} className="h-20 w-16" sizes="64px" />
         <p className="font-display text-lg font-extrabold leading-snug">{title}</p>
@@ -41,7 +45,7 @@ export function QuoteSummary({
       </dl>
       {offer !== undefined && (
         <div className="mt-5">
-          <p className="text-sm font-semibold text-muted">Your offer</p>
+          <p className="text-sm font-semibold text-muted">{t.summary.yourOffer}</p>
           <p className={`font-display mt-1 text-4xl font-extrabold ${offer ? "text-ink" : "text-muted/40"}`} aria-live="polite">
             {offer ? `$${offer.toLocaleString("en-US")}` : "$ ‑‑‑"}
           </p>

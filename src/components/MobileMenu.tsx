@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Menu, X } from "lucide-react";
 import { CATEGORIES } from "@/data/catalog";
+import { useI18n } from "@/i18n/client";
+import { LanguageToggle } from "./LanguageToggle";
 import { MAIN_NAV, useSection } from "./MainNav";
 
 interface NavLink {
@@ -17,6 +19,7 @@ interface NavLink {
 export function MobileMenu({ utility }: { utility: NavLink[] }) {
   const [open, setOpen] = useState(false);
   const section = useSection();
+  const { t } = useI18n();
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -31,7 +34,7 @@ export function MobileMenu({ utility }: { utility: NavLink[] }) {
         type="button"
         onClick={() => setOpen(true)}
         className="grid h-10 w-10 place-items-center rounded-xl border border-line text-ink"
-        aria-label="Open menu"
+        aria-label={t.nav.openMenu}
         aria-expanded={open}
       >
         <Menu className="h-5 w-5" />
@@ -42,15 +45,16 @@ export function MobileMenu({ utility }: { utility: NavLink[] }) {
             className="fixed inset-0 z-50 flex flex-col bg-white"
             role="dialog"
             aria-modal="true"
-            aria-label="Menu"
+            aria-label={t.nav.menu}
           >
             <div className="flex h-16 items-center justify-between border-b border-line px-4">
-              <span className="eyebrow">Menu</span>
+              <span className="eyebrow">{t.nav.menu}</span>
+              <LanguageToggle className="ml-auto mr-3" />
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 className="grid h-10 w-10 place-items-center rounded-xl border border-line"
-                aria-label="Close menu"
+                aria-label={t.nav.closeMenu}
               >
                 <X className="h-5 w-5" />
               </button>
@@ -62,12 +66,13 @@ export function MobileMenu({ utility }: { utility: NavLink[] }) {
               }
             >
               <div className="grid grid-cols-2 gap-2">
-                {MAIN_NAV.map((l) => {
-                  const current = l.label === section;
+                {MAIN_NAV.map((nav) => {
+                  const l = { ...nav, label: t.nav[nav.id] };
+                  const current = l.id === section;
                   const cls = "flex flex-col items-center rounded-xl border py-3 text-center text-sm font-bold uppercase tracking-[0.08em]";
                   return l.href ? (
                     <Link
-                      key={l.label}
+                      key={l.id}
                       href={l.href}
                       aria-current={current ? "page" : undefined}
                       className={`${cls} ${current ? "border-brand bg-brand-soft text-brand" : "border-line text-ink"}`}
@@ -75,14 +80,14 @@ export function MobileMenu({ utility }: { utility: NavLink[] }) {
                       {l.label}
                     </Link>
                   ) : (
-                    <span key={l.label} aria-disabled="true" className={`${cls} cursor-default border-line text-muted/70`}>
+                    <span key={l.id} aria-disabled="true" className={`${cls} cursor-default border-line text-muted/70`}>
                       {l.label}
-                      <span className="mt-0.5 text-[10px] font-semibold normal-case tracking-normal text-muted">Coming soon</span>
+                      <span className="mt-0.5 text-[10px] font-semibold normal-case tracking-normal text-muted">{t.nav.comingSoon}</span>
                     </span>
                   );
                 })}
               </div>
-              <p className="eyebrow mt-8">Sell a device</p>
+              <p className="eyebrow mt-8">{t.nav.sellADevice}</p>
               <ul className="mt-3 divide-y divide-line rounded-2xl border border-line">
                 {CATEGORIES.map((c) => (
                   <li key={c.id}>

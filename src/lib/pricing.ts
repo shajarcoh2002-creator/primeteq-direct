@@ -63,7 +63,8 @@ export const DEFAULT_SETTINGS: PricingSettings = {
   },
   conditionPct: { flawless: 100, good: 100, fair: 96, poor: 57, broken: 41 },
   // AT&T from Gazelle (17 Pro Max 1TB: $726 AT&T vs $811 unlocked); T-Mobile and Verizon assumed the same until checked.
-  carrierPct: { unlocked: 100, att: 89.5, tmobile: 89.5, verizon: 89.5, other: 80, wifi: 100, cellular: 108 },
+  // Panama: Más Móvil priced like a US carrier lock, Tigo like unlocked (per business decision).
+  carrierPct: { unlocked: 100, att: 89.5, tmobile: 89.5, verizon: 89.5, masmovil: 89.5, tigo: 100, other: 80, wifi: 100, cellular: 108 },
   curves: {
     "apple-phone": [[0, 93], [6, 90], [12, 88], [24, 68], [36, 52], [48, 38], [60, 27], [72, 18], [84, 12], [96, 8], [120, 5]],
     samsung: [[0, 80], [6, 70], [12, 60], [24, 42], [36, 30], [48, 20], [60, 13], [72, 8], [96, 4]],

@@ -1,16 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { CATEGORIES, type CategoryId } from "@/data/catalog";
-
-export const FLOW_STEPS = ["Select", "Get offer", "Payment", "Shipping"] as const;
+import { fmt } from "@/i18n/config";
+import { useI18n } from "@/i18n/client";
 
 /** Category tabs + four-stage progress indicator shown under the header. */
 export function FlowBar({ category, current }: { category?: CategoryId; current: 0 | 1 | 2 | 3 }) {
+  const { t } = useI18n();
   return (
     <div className="border-b border-line bg-white">
       <div className="container-page">
         <nav
-          aria-label="Device categories"
+          aria-label={t.flow.categories}
           className={`-mx-4 gap-1 overflow-x-auto px-4 pt-3 [mask-image:linear-gradient(to_right,black_80%,transparent)] [scrollbar-width:none] md:mx-0 md:flex md:px-0 md:[mask-image:none] ${
             category ? "flex" : "hidden"
           }`}
@@ -38,12 +41,14 @@ export function FlowBar({ category, current }: { category?: CategoryId; current:
 }
 
 export function Stepper({ current }: { current: number }) {
+  const { t } = useI18n();
+  const FLOW_STEPS = t.flow.steps;
   return (
     <div className="py-4">
       {/* Mobile: compact */}
       <div className="md:hidden">
         <p className="text-sm font-semibold">
-          <span className="text-brand">Step {current + 1} of {FLOW_STEPS.length}</span>
+          <span className="text-brand">{fmt(t.flow.stepOf, { n: current + 1, total: FLOW_STEPS.length })}</span>
           <span className="text-muted"> · {FLOW_STEPS[current]}</span>
         </p>
         <div className="mt-2 grid grid-cols-4 gap-1.5" aria-hidden>
@@ -53,7 +58,7 @@ export function Stepper({ current }: { current: number }) {
         </div>
       </div>
       {/* Desktop: full */}
-      <ol className="hidden items-center gap-3 md:flex" aria-label="Progress">
+      <ol className="hidden items-center gap-3 md:flex" aria-label={t.flow.progress}>
         {FLOW_STEPS.map((s, i) => {
           const done = i < current;
           const active = i === current;

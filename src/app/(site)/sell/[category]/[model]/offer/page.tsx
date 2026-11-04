@@ -1,12 +1,14 @@
 import { notFound } from "next/navigation";
-import { CARRIER_LABELS } from "@/data/catalog";
 import { quoteById } from "@/lib/db";
 import { FlowBar } from "@/components/FlowBar";
 import { getDevicePhoto } from "@/lib/photos";
+import { getDict } from "@/i18n/server";
 import { Questionnaire } from "./Questionnaire";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Get your offer" };
+export async function generateMetadata() {
+  return { title: (await getDict()).meta.getOffer };
+}
 
 export default async function OfferPage({ searchParams }: PageProps<"/sell/[category]/[model]/offer">) {
   const v = (await searchParams).v;
@@ -29,8 +31,7 @@ export default async function OfferPage({ searchParams }: PageProps<"/sell/[cate
             modelName={model.name}
             photo={photo}
             storage={storage.label}
-            carrierLabel={CARRIER_LABELS[carrier]}
-            carrierTitle={category.kind === "tablet" ? "Connectivity" : "Carrier"}
+            carrier={carrier}
           />
         </div>
       </section>
