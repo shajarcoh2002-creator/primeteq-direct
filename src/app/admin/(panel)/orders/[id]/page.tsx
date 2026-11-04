@@ -62,7 +62,7 @@ export default async function AdminOrderPage({ params, searchParams }: PageProps
             <p className="mt-1 text-sm text-muted">
               {waConfigured
                 ? "An alert with this order’s summary is sent to the manager automatically when the order comes in."
-                : "Automatic alerts aren’t connected yet (WHATSAPP_TOKEN / WHATSAPP_PHONE_NUMBER_ID / WHATSAPP_NOTIFY_TO). Use the button to send the summary yourself."}
+                : "Automatic alerts aren’t connected yet (WHATSAPP_TOKEN / WHATSAPP_PHONE_NUMBER_ID). Use the button to send the summary yourself."}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">

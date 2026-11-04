@@ -17,6 +17,7 @@ export default async function ShippingPaymentsPage() {
   const days = settings.offerValidDays;
   const P = policyFor(t);
   const mail = <a href={`mailto:${CONTACT.email}`} className="font-semibold text-brand hover:underline">{CONTACT.email}</a>;
+  const wa = <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-brand hover:underline">{CONTACT.whatsapp}</a>;
   const track = <Link href="/track" className="font-semibold text-brand hover:underline">{t.nav.trackOffer}</Link>;
   const locations = (
     <ul>
@@ -42,7 +43,7 @@ export default async function ShippingPaymentsPage() {
                   orden, dentro de los {days} días de validez de la oferta:
                 </p>
                 {locations}
-                <p>Te enviamos la dirección y los detalles por correo. Si necesitas coordinar la hora, escríbenos por WhatsApp o a {mail}.</p>
+                <p>Te enviamos la dirección y los detalles por correo. Para coordinar la hora, escríbenos por WhatsApp al {wa} o a {mail}.</p>
               </>
             ),
           },
@@ -114,7 +115,7 @@ export default async function ShippingPaymentsPage() {
                   order number, within the {days}-day offer period:
                 </p>
                 {locations}
-                <p>We email you the address and details. To arrange a time, message us on WhatsApp or email {mail}.</p>
+                <p>We email you the address and details. To arrange a time, message us on WhatsApp at {wa} or email {mail}.</p>
               </>
             ),
           },

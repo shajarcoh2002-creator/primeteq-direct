@@ -86,7 +86,7 @@ export const en = {
   faq: {
     eyebrow: "FAQ",
     title: "Questions, answered.",
-    help: "Still need help? Email {email} or message us on Instagram.",
+    help: "Still need help? Email {email}, message us on WhatsApp at {whatsapp} or on Instagram.",
     items: {
       whichModelQ: "How do I find which model I have?",
       conditionQ: "How do I describe my device’s condition?",
@@ -307,6 +307,7 @@ export const en = {
     labelSoon: "Your free prepaid shipping label and instructions arrive by email within {labelWithin}. Pack the device securely, attach the label and drop it off with the carrier shown on it.",
     dropoffTitle: "Drop off your device",
     dropoffBody: "Bring your device and your order number ({id}) to:",
+    dropoffCoordinate: "To arrange the time, message us on WhatsApp:",
     validUntil: "This offer is valid until {date}.",
     history: "History",
     finalOffer: "Final offer",

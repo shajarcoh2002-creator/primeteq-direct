@@ -7,6 +7,7 @@ import { policyFor } from "@/lib/policy";
 import { getDevicePhoto } from "@/lib/photos";
 import { getLocation, mapsUrl } from "@/lib/locations";
 import { QuoteSummary } from "@/components/QuoteSummary";
+import { CONTACT } from "@/lib/contact";
 import { fmt } from "@/i18n/config";
 import { rich } from "@/i18n/rich";
 import { getDict, getLang } from "@/i18n/server";
@@ -94,6 +95,12 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
                           </a>
                         </div>
                       )}
+                      <p className="mt-3 text-sm text-ink-2">
+                        {o.dropoffCoordinate}{" "}
+                        <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-brand hover:underline">
+                          {CONTACT.whatsapp}
+                        </a>
+                      </p>
                     </>
                   ) : (
                     <>

@@ -118,6 +118,7 @@ export async function Faq({ items, title }: { items: FaqItem[]; title?: string }
           <p className="mt-4 text-muted">
             {rich(beforeIg, {
               email: <a href={`mailto:${CONTACT.email}`} className="font-semibold text-brand hover:underline">{CONTACT.email}</a>,
+              whatsapp: <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-brand hover:underline">{CONTACT.whatsapp}</a>,
             })}
             <a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-brand hover:underline">
               <InstagramIcon className="h-3.5 w-3.5" /> Instagram

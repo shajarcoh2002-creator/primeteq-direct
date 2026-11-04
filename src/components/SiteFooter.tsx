@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CATEGORIES } from "@/data/catalog";
-import { Mail } from "lucide-react";
+import { Mail, MessageCircle } from "lucide-react";
 import { CONTACT } from "@/lib/contact";
 import { InstagramIcon } from "./InstagramIcon";
 import { Logo } from "./Logo";
@@ -38,6 +38,9 @@ export async function SiteFooter() {
             <a href={`https://${CONTACT.website}`} className="block font-semibold text-ink hover:text-brand">{CONTACT.website}</a>
             <a href={`mailto:${CONTACT.email}`} className="flex items-center gap-2 text-muted hover:text-brand">
               <Mail className="h-4 w-4" /> {CONTACT.email}
+            </a>
+            <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-muted hover:text-brand">
+              <MessageCircle className="h-4 w-4" /> WhatsApp {CONTACT.whatsapp}
             </a>
             <a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-muted hover:text-brand">
               <InstagramIcon /> {CONTACT.instagramHandle}

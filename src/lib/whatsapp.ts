@@ -1,5 +1,6 @@
 import { CARRIER_LABELS } from "@/data/catalog";
 import { type Order, PAYOUT_LABELS, orderCountry } from "./db";
+import { CONTACT } from "./contact";
 import { siteUrl } from "./email";
 import { getLocation } from "./locations";
 import { CONDITION_LABELS } from "./pricing";
@@ -9,7 +10,7 @@ import { CONDITION_LABELS } from "./pricing";
 // Env vars (Vercel → Settings → Environment Variables):
 //   WHATSAPP_TOKEN            permanent access token of the Meta system user
 //   WHATSAPP_PHONE_NUMBER_ID  id of the business number that sends the alert
-//   WHATSAPP_NOTIFY_TO        manager number(s) in international format, comma-separated: 50761234567
+//   WHATSAPP_NOTIFY_TO        optional: manager number(s), international format, comma-separated (default: CONTACT.managerWhatsapp)
 //   WHATSAPP_TEMPLATE         approved template name (e.g. nueva_orden). Without it a plain text is sent,
 //                             which WhatsApp only delivers if the manager wrote to the business number in the last 24 h.
 //   WHATSAPP_TEMPLATE_LANG    template language code (default "es")
@@ -19,7 +20,13 @@ import { CONDITION_LABELS } from "./pricing";
 
 const GRAPH = "https://graph.facebook.com/v21.0";
 
-export const whatsappConfigured = () => Boolean(process.env.WHATSAPP_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID && process.env.WHATSAPP_NOTIFY_TO);
+export const whatsappConfigured = () => Boolean(process.env.WHATSAPP_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID);
+
+const recipients = () =>
+  (process.env.WHATSAPP_NOTIFY_TO?.trim() || CONTACT.managerWhatsapp)
+    .split(",")
+    .map((n) => n.replace(/\D/g, ""))
+    .filter(Boolean);
 
 /** The 8 template values for an order (no newlines: WhatsApp rejects them in template parameters). */
 export function orderSummaryFields(order: Order) {
@@ -56,17 +63,16 @@ export function orderSummaryText(order: Order) {
 
 /** wa.me link that opens WhatsApp with the summary ready to send. */
 export function whatsappShareUrl(order: Order) {
-  const to = (process.env.WHATSAPP_NOTIFY_TO ?? "").split(",")[0]?.replace(/\D/g, "") ?? "";
+  const to = recipients()[0] ?? "";
   return `https://wa.me/${to}?text=${encodeURIComponent(orderSummaryText(order))}`;
 }
 
 export async function notifyNewOrder(order: Order): Promise<{ ok: boolean; detail: string }> {
-  if (!whatsappConfigured()) return { ok: false, detail: "not configured (WHATSAPP_TOKEN / WHATSAPP_PHONE_NUMBER_ID / WHATSAPP_NOTIFY_TO missing)" };
+  if (!whatsappConfigured()) return { ok: false, detail: "not configured (WHATSAPP_TOKEN / WHATSAPP_PHONE_NUMBER_ID missing)" };
   const template = process.env.WHATSAPP_TEMPLATE?.trim();
-  const recipients = process.env.WHATSAPP_NOTIFY_TO!.split(",").map((n) => n.replace(/\D/g, "")).filter(Boolean);
 
   const results = await Promise.all(
-    recipients.map(async (to) => {
+    recipients().map(async (to) => {
       const body = template
         ? {
             messaging_product: "whatsapp",

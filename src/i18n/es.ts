@@ -86,7 +86,7 @@ export const es: Dict = {
   faq: {
     eyebrow: "Preguntas frecuentes",
     title: "Resolvemos tus dudas.",
-    help: "¿Necesitas ayuda? Escríbenos a {email} o por Instagram.",
+    help: "¿Necesitas ayuda? Escríbenos a {email}, por WhatsApp al {whatsapp} o por Instagram.",
     items: {
       whichModelQ: "¿Cómo sé qué modelo tengo?",
       conditionQ: "¿Cómo describo la condición de mi equipo?",
@@ -307,6 +307,7 @@ export const es: Dict = {
     labelSoon: "Tu etiqueta de envío prepagada y gratis, con las instrucciones, llega por correo en {labelWithin}. Empaca bien el equipo, pega la etiqueta y entrégalo a la empresa de envíos que aparece en ella.",
     dropoffTitle: "Entrega tu equipo",
     dropoffBody: "Lleva tu equipo y tu número de orden ({id}) a:",
+    dropoffCoordinate: "Para coordinar la hora, escríbenos por WhatsApp:",
     validUntil: "Esta oferta es válida hasta el {date}.",
     history: "Historial",
     finalOffer: "Oferta final",

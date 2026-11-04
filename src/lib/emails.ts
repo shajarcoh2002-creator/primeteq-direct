@@ -44,6 +44,7 @@ const COPY = {
     viewOrder: "View your order",
     keepNumber: "Keep your order number ({id}) to track your order at any time.",
     map: "Open in Google Maps",
+    coordinate: "To arrange the time, message us on WhatsApp:",
     acceptedSubject: "Your Prime Teq offer is accepted — order {id}",
     labelTitle: "Your shipping label is ready",
     labelHi: "Hi {name}, here’s your prepaid shipping label for order <strong>{id}</strong> ({device}).",
@@ -86,6 +87,7 @@ const COPY = {
     viewOrder: "Ver tu orden",
     keepNumber: "Guarda tu número de orden ({id}) para rastrearla cuando quieras.",
     map: "Abrir en Google Maps",
+    coordinate: "Para coordinar la hora, escríbenos por WhatsApp:",
     acceptedSubject: "Tu oferta de Prime Teq fue aceptada — orden {id}",
     labelTitle: "Tu etiqueta de envío está lista",
     labelHi: "Hola {name}, aquí está tu etiqueta de envío prepagada para la orden <strong>{id}</strong> ({device}).",
@@ -186,7 +188,8 @@ export function orderConfirmationEmail(order: Order): EmailMessage {
     `<p style="margin:0">${hi}</p>
 ${summaryTable(order)}
 <p style="margin:0">${next}</p>
-${loc ? `<p style="margin:8px 0 0"><a href="${esc(mapsUrl(loc))}" style="color:${BLUE};font-weight:600">${esc(c.map)}</a></p>` : ""}
+${loc ? `<p style="margin:8px 0 0"><a href="${esc(mapsUrl(loc))}" style="color:${BLUE};font-weight:600">${esc(c.map)}</a></p>
+<p style="margin:8px 0 0">${esc(c.coordinate)} <a href="${CONTACT.whatsappUrl}" style="color:${BLUE};font-weight:600">${esc(CONTACT.whatsapp)}</a></p>` : ""}
 <p style="margin:16px 0 0"><strong>${esc(c.getReady)}</strong></p>
 ${list(c.prep)}
 ${button(orderUrl, c.viewOrder)}
@@ -200,7 +203,7 @@ ${summaryRows(order)
   .map(([k, v]) => `${k}: ${v}`)
   .join("\n")}
 
-${stripTags(next)}${loc ? `\n${mapsUrl(loc)}` : ""}
+${stripTags(next)}${loc ? `\n${mapsUrl(loc)}\n${c.coordinate} ${CONTACT.whatsapp}` : ""}
 
 ${c.getReady}
 ${c.prep.map((p) => `- ${p}`).join("\n")}

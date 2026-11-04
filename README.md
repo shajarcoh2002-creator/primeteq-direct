@@ -93,7 +93,7 @@ En cada orden nueva se envía automáticamente un resumen (equipo, oferta, clien
 | --- | --- |
 | `WHATSAPP_TOKEN` | Token permanente del usuario del sistema en Meta Business |
 | `WHATSAPP_PHONE_NUMBER_ID` | ID del número de WhatsApp Business que envía |
-| `WHATSAPP_NOTIFY_TO` | Número(s) del encargado, formato internacional sin `+`, separados por coma (ej. `50761234567`) |
+| `WHATSAPP_NOTIFY_TO` | Opcional. Número(s) del encargado sin `+`, separados por coma. Si no se pone, se usa 50767472722 |
 | `WHATSAPP_TEMPLATE` | Nombre de la plantilla aprobada (ej. `nueva_orden`) |
 | `WHATSAPP_TEMPLATE_LANG` | Idioma de la plantilla (por defecto `es`) |
 
