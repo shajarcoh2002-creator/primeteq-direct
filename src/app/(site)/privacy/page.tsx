@@ -17,7 +17,7 @@ export default async function PrivacyPage() {
       body: (
         <ul>
           <li><strong>Contacto:</strong> tu nombre, correo electrónico y teléfono / WhatsApp (obligatorio en Panamá, opcional en EE. UU.).</li>
-          <li><strong>Dirección:</strong> en EE. UU., la dirección desde donde envías, para crear tu etiqueta. En Panamá, el punto de entrega que eliges.</li>
+          <li><strong>Dirección:</strong> en EE. UU., la dirección desde donde envías, para crear tu etiqueta. En Panamá no pedimos dirección: entregas el equipo en nuestra tienda.</li>
           <li>
             <strong>Datos de pago:</strong> según el método que elijas, tu número de Yappy, tu banco, tipo y número de cuenta para ACH, tu correo de
             PayPal o tu correo o celular de Zelle, y el nombre del titular.
@@ -45,7 +45,7 @@ export default async function PrivacyPage() {
         <>
           <p>No vendemos tu información personal. Solo la compartimos cuando hace falta con:</p>
           <ul>
-            <li>nuestro equipo y el encargado de cada punto de entrega, que reciben el resumen de tu orden (incluso por WhatsApp) para atenderte;</li>
+            <li>nuestro equipo y el encargado de nuestra tienda, que reciben el resumen de tu orden (incluso por WhatsApp) para atenderte;</li>
             <li>empresas de envío, para crear y entregar tu etiqueta y paquete (EE. UU.);</li>
             <li>proveedores de pago (Yappy, nuestro banco para ACH, PayPal, Zelle), para enviarte el pago;</li>
             <li>proveedores que alojan nuestro sitio, guardan nuestros datos o envían mensajes (como correo y WhatsApp), con obligación de confidencialidad;</li>
@@ -101,7 +101,7 @@ export default async function PrivacyPage() {
       body: (
         <ul>
           <li><strong>Contact details:</strong> your name, email address and phone / WhatsApp number (required in Panama, optional in the U.S.).</li>
-          <li><strong>Address:</strong> in the U.S., the address you ship from, used to create your label. In Panama, the drop-off location you choose.</li>
+          <li><strong>Address:</strong> in the U.S., the address you ship from, used to create your label. In Panama we don’t ask for an address: you drop the device off at our store.</li>
           <li>
             <strong>Payment details:</strong> depending on the method you choose, your Yappy number, your bank, account type and number for ACH, your
             PayPal email or your Zelle email or mobile number, and the account holder’s name.
@@ -129,7 +129,7 @@ export default async function PrivacyPage() {
         <>
           <p>We don’t sell your personal information. We share it only as needed with:</p>
           <ul>
-            <li>our team and the person in charge of each drop-off location, who receive your order summary (including by WhatsApp) to serve you;</li>
+            <li>our team and the person in charge of our store, who receive your order summary (including by WhatsApp) to serve you;</li>
             <li>shipping carriers, to create and deliver your label and package (U.S.);</li>
             <li>payment providers (Yappy, our bank for ACH, PayPal, Zelle), to send your payment;</li>
             <li>service providers that host our site, store our data or send messages (such as email and WhatsApp), under confidentiality obligations;</li>

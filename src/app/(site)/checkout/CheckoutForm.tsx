@@ -45,6 +45,9 @@ export function CheckoutForm({
   const [bank, setBank] = useState(v("achBank"));
   const method = PAYOUTS[country].includes(payout as never) ? (payout as (typeof PAYOUTS)[Country][number]) : PAYOUTS[country][0];
   const current = c.payouts[method];
+  // Panama payout details are optional: they can be given at the store.
+  const optional = method === "yappy" || method === "ach";
+  const opt = optional ? <span className="font-normal text-muted"> {c.optional}</span> : null;
 
   const chooseCountry = (next: Country) => {
     setCountry(next);
@@ -110,12 +113,14 @@ export function CheckoutForm({
           ))}
         </div>
 
+        {optional && <p className="rounded-xl bg-paper p-3 text-sm text-ink-2">{c.payLater}</p>}
+
         {method === "ach" && (
           <div className="grid max-w-xl gap-4 sm:grid-cols-2">
             <div>
-              <label className="label" htmlFor="achBank">{c.achBank}</label>
-              <select id="achBank" name="achBank" value={bank} onChange={(e) => setBank(e.target.value)} className="field" required>
-                <option value="" disabled>{c.achBankPlaceholder}</option>
+              <label className="label" htmlFor="achBank">{c.achBank}{opt}</label>
+              <select id="achBank" name="achBank" value={bank} onChange={(e) => setBank(e.target.value)} className="field">
+                <option value="">{c.achBankPlaceholder}</option>
                 {banks.map((b) => (
                   <option key={b} value={b}>{b}</option>
                 ))}
@@ -123,11 +128,11 @@ export function CheckoutForm({
               </select>
             </div>
             <div>
-              <span className="label">{c.achType}</span>
+              <span className="label">{c.achType}{opt}</span>
               <div className="grid grid-cols-2 gap-2">
                 {(["savings", "checking"] as const).map((k) => (
                   <label key={k} className="option cursor-pointer has-[:checked]:border-brand has-[:checked]:bg-brand-soft">
-                    <input type="radio" name="achType" value={k} defaultChecked={v("achType") === k} className="accent-brand" required />
+                    <input type="radio" name="achType" value={k} defaultChecked={v("achType") === k} className="accent-brand" />
                     {c.achTypes[k]}
                   </label>
                 ))}
@@ -136,7 +141,7 @@ export function CheckoutForm({
             {bank === "other" && (
               <div className="sm:col-span-2">
                 <label className="label" htmlFor="achBankOther">{c.achBankOther}</label>
-                <input id="achBankOther" name="achBankOther" defaultValue={v("achBankOther")} className="field" required />
+                <input id="achBankOther" name="achBankOther" defaultValue={v("achBankOther")} className="field" />
               </div>
             )}
           </div>
@@ -144,7 +149,7 @@ export function CheckoutForm({
 
         <div className="grid max-w-xl gap-4 sm:grid-cols-2">
           <div>
-            <label className="label" htmlFor="payoutHandle">{current.hint}</label>
+            <label className="label" htmlFor="payoutHandle">{current.hint}{opt}</label>
             <input
               key={`h-${method}`}
               id="payoutHandle"
@@ -153,12 +158,12 @@ export function CheckoutForm({
               className="field"
               inputMode={method === "yappy" || method === "ach" ? "numeric" : undefined}
               autoComplete={method === "paypal" ? "email" : "off"}
-              required
+              required={!optional}
             />
             <p className="mt-1.5 text-sm text-muted">{current.note}</p>
           </div>
           <div>
-            <label className="label" htmlFor="payoutHandleConfirm">{current.confirm}</label>
+            <label className="label" htmlFor="payoutHandleConfirm">{current.confirm}{opt}</label>
             <input
               key={`c-${method}`}
               id="payoutHandleConfirm"
@@ -167,15 +172,15 @@ export function CheckoutForm({
               className="field"
               inputMode={method === "yappy" || method === "ach" ? "numeric" : undefined}
               autoComplete="off"
-              required
+              required={!optional}
             />
           </div>
           {method !== "paypal" && (
             <div className="sm:col-span-2">
               <label className="label" htmlFor="payoutName">
-                {method === "zelle" ? c.zelleName : method === "yappy" ? c.yappyName : c.achHolder}
+                {method === "zelle" ? c.zelleName : method === "yappy" ? c.yappyName : c.achHolder}{opt}
               </label>
-              <input key={`n-${method}`} id="payoutName" name="payoutName" defaultValue={v("payoutName")} className="field" autoComplete="name" required />
+              <input key={`n-${method}`} id="payoutName" name="payoutName" defaultValue={v("payoutName")} className="field" autoComplete="name" required={!optional} />
               {method === "zelle" && <p className="mt-1.5 text-sm text-muted">{c.zelleNameHelp}</p>}
             </div>
           )}
@@ -211,33 +216,22 @@ export function CheckoutForm({
       ) : (
         <Section letter="D" title={c.dropoffTitle}>
           <p className="-mt-1 text-sm text-muted">{c.dropoffLead}</p>
-          <div className="grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label={c.dropoffTitle}>
-            {locations.map((l) => (
-              <label
-                key={l.id}
-                className="option cursor-pointer !items-start !py-4 has-[:checked]:border-brand has-[:checked]:bg-brand-soft"
-              >
-                <input type="radio" name="dropoff" value={l.id} defaultChecked={v("dropoff") === l.id} className="mt-1 accent-brand" required />
-                <span className="min-w-0">
-                  <span className="block">{l.name}</span>
-                  <span className="mt-0.5 block text-sm font-normal text-muted">
-                    {l.address[lang] !== l.name && <>{l.address[lang]} · </>}
-                    {l.area}
-                  </span>
-                  {l.hours && <span className="mt-0.5 block text-xs font-normal text-muted">{l.hours[lang]}</span>}
-                  <a
-                    href={l.maps}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <MapPin className="h-3.5 w-3.5" /> Google Maps
-                  </a>
-                </span>
-              </label>
-            ))}
-          </div>
+          {locations.map((l) => (
+            <div key={l.id} className="flex items-start gap-3 rounded-2xl border border-brand/40 bg-brand-soft/50 p-4">
+              <input type="hidden" name="dropoff" value={l.id} />
+              <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
+              <div className="min-w-0">
+                <p className="font-semibold">{l.name}</p>
+                <p className="text-sm text-muted">
+                  {l.address[lang]} · {l.area}
+                </p>
+                {l.hours && <p className="text-xs text-muted">{l.hours[lang]}</p>}
+                <a href={l.maps} target="_blank" rel="noopener noreferrer" className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline">
+                  Google Maps ↗
+                </a>
+              </div>
+            </div>
+          ))}
         </Section>
       )}
 

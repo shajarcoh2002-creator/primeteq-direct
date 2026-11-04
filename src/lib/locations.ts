@@ -1,8 +1,8 @@
 import type { Lang } from "@/i18n/config";
 
-// Panama drop-off points. In Panama we don't ship: customers bring the device to one of these.
+// Panama drop-off. In Panama we don't ship: customers bring the device to our BH Tech store.
 // Edit here and the checkout, order page, emails and admin all update.
-// TODO(Prime Teq): add BH Tech's exact address and the hours of each location.
+// TODO(Prime Teq): add the store hours (and the exact local number if any).
 
 export interface DropoffLocation {
   id: string;
@@ -17,20 +17,16 @@ export interface DropoffLocation {
 
 export const DROPOFF_LOCATIONS: DropoffLocation[] = [
   {
-    id: "super-99",
-    name: "Super 99 Paitilla",
-    address: { es: "Super 99 Paitilla", en: "Super 99 Paitilla" },
-    area: "Punta Paitilla, Ciudad de Panamá",
-    mapsQuery: "Super 99 Paitilla, Panamá",
-  },
-  {
     id: "bh-tech",
-    name: "BH Tech",
-    address: { es: "Local de BH Tech", en: "BH Tech store" },
-    area: "Ciudad de Panamá",
-    mapsQuery: "BH Tech Panamá",
+    name: "Tienda BH Tech",
+    address: { es: "Plaza Pacífica (Super 99), local BH Tech", en: "Plaza Pacífica (Super 99), BH Tech store" },
+    area: "Punta Paitilla, Ciudad de Panamá",
+    mapsQuery: "Super 99 Plaza Pacífica Paitilla, Panamá",
   },
 ];
+
+/** Panama drop-off is always our BH Tech store. */
+export const DEFAULT_DROPOFF = DROPOFF_LOCATIONS[0];
 
 export const getLocation = (id: string | undefined) => DROPOFF_LOCATIONS.find((l) => l.id === id);
 

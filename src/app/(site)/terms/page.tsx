@@ -26,7 +26,7 @@ export default async function TermsPage() {
           <p>Para vender un equipo a {P.company}, debes:</p>
           <ul>
             <li>tener al menos {P.minAge} años y poder celebrar un acuerdo vinculante;</li>
-            <li>vivir en {P.serviceArea}: en Panamá entregas el equipo en uno de nuestros puntos; en EE. UU. lo envías desde una dirección allí;</li>
+            <li>vivir en {P.serviceArea}: en Panamá entregas el equipo en nuestra tienda BH Tech; en EE. UU. lo envías desde una dirección allí;</li>
             <li>ser el dueño del equipo, o estar autorizado por el dueño para venderlo;</li>
             <li>darnos información correcta sobre ti, tus datos de pago y tu equipo.</li>
           </ul>
@@ -85,7 +85,7 @@ export default async function TermsPage() {
         <>
           <p>Antes de entregarlo, te comprometes a respaldar tus datos, cerrar sesión en todas tus cuentas, desactivar los bloqueos, restablecerlo de fábrica y quitar la SIM.</p>
           <p>
-            En Panamá, llevas el equipo al punto de entrega que elegiste con tu número de orden. En EE. UU., te enviamos por correo una etiqueta de
+            En Panamá, llevas el equipo a nuestra tienda BH Tech con tu número de orden. En EE. UU., te enviamos por correo una etiqueta de
             envío prepagada en {P.labelWithin}. Más detalles en {shipping}.
           </p>
         </>
@@ -176,7 +176,7 @@ export default async function TermsPage() {
           <p>To sell a device to {P.company}, you must:</p>
           <ul>
             <li>be at least {P.minAge} years old and able to enter into a binding agreement;</li>
-            <li>live in {P.serviceArea}: in Panama you drop the device off at one of our locations; in the U.S. you ship it from an address there;</li>
+            <li>live in {P.serviceArea}: in Panama you drop the device off at our BH Tech store; in the U.S. you ship it from an address there;</li>
             <li>be the owner of the device, or be authorized by the owner to sell it;</li>
             <li>give us accurate information about yourself, your payment details and your device.</li>
           </ul>
@@ -234,7 +234,7 @@ export default async function TermsPage() {
         <>
           <p>Before you deliver it, you agree to back up your data, sign out of all accounts, turn off device locks, factory reset the device and remove the SIM card.</p>
           <p>
-            In Panama, bring the device and your order number to the drop-off location you chose. In the U.S., we email you a prepaid shipping label
+            In Panama, bring the device and your order number to our BH Tech store. In the U.S., we email you a prepaid shipping label
             within {P.labelWithin} of checkout. See {shipping} for details.
           </p>
         </>

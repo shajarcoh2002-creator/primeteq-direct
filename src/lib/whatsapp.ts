@@ -40,8 +40,8 @@ export function orderSummaryFields(order: Order) {
     `$${price.toLocaleString("en-US")}`,
     order.customer.name,
     [order.customer.phone, order.customer.email].filter(Boolean).join(" · "),
-    [PAYOUT_LABELS[order.payout.method], order.payout.bank, order.payout.accountName].filter(Boolean).join(" · "),
-    pa ? `Drop-off Panamá: ${loc?.name ?? order.dropoff?.locationId ?? "—"}` : `Envío EE. UU.: ${a.city}, ${a.state} ${a.zip}`,
+    [PAYOUT_LABELS[order.payout.method], order.payout.pending ? "datos en la tienda" : "", order.payout.bank, order.payout.accountName].filter(Boolean).join(" · "),
+    pa ? `Tienda: ${loc?.name ?? order.dropoff?.locationId ?? "—"}` : `Envío EE. UU.: ${a.city}, ${a.state} ${a.zip}`,
     `${siteUrl()}/admin/orders/${order.id}`,
   ].map((s) => s.replace(/\s+/g, " ").trim() || "—");
 }

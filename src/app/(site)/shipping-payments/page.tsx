@@ -35,11 +35,11 @@ export default async function ShippingPaymentsPage() {
     lang === "es"
       ? [
           {
-            title: "Panamá: entrega en un punto",
+            title: "Panamá: entrega en tienda",
             body: (
               <>
                 <p>
-                  En Panamá no hacemos envíos. Al aceptar tu oferta eliges uno de nuestros puntos de entrega y llevas ahí tu equipo, con tu número de
+                  En Panamá no hacemos envíos. Al aceptar tu oferta llevas tu equipo a nuestra tienda, con tu número de
                   orden, dentro de los {days} días de validez de la oferta:
                 </p>
                 {locations}
@@ -89,7 +89,7 @@ export default async function ShippingPaymentsPage() {
             title: "Cómo te pagamos",
             body: (
               <>
-                <p>Te pagamos en {P.paymentWithin} después de aprobar tu equipo, con el método que elegiste:</p>
+                <p>Te pagamos en {P.paymentWithin} después de aprobar tu equipo, con el método que elegiste. En Panamá puedes darnos tus datos de Yappy o ACH al finalizar o en la tienda.</p>
                 <ul>
                   <li><strong>Yappy (Panamá):</strong> al número de celular vinculado a tu Yappy, a nombre de esa cuenta.</li>
                   <li><strong>Transferencia ACH (Panamá):</strong> a la cuenta de ahorros o corriente que indicaste (banco, tipo, número y titular).</li>
@@ -107,11 +107,11 @@ export default async function ShippingPaymentsPage() {
         ]
       : [
           {
-            title: "Panama: drop-off",
+            title: "Panama: store drop-off",
             body: (
               <>
                 <p>
-                  In Panama we don’t ship. When you accept your offer you choose one of our drop-off locations and bring your device there, with your
+                  In Panama we don’t ship. When you accept your offer you bring your device to our store, with your
                   order number, within the {days}-day offer period:
                 </p>
                 {locations}
@@ -161,7 +161,7 @@ export default async function ShippingPaymentsPage() {
             title: "Getting paid",
             body: (
               <>
-                <p>We send your payment within {P.paymentWithin} of approving your device, using the method you chose at checkout:</p>
+                <p>We send your payment within {P.paymentWithin} of approving your device, using the method you chose. In Panama you can give us your Yappy or ACH details at checkout or at the store.</p>
                 <ul>
                   <li><strong>Yappy (Panama):</strong> to the mobile number linked to your Yappy account, under the name on that account.</li>
                   <li><strong>ACH transfer (Panama):</strong> to the savings or checking account you gave us (bank, type, number and holder).</li>
@@ -185,8 +185,8 @@ export default async function ShippingPaymentsPage() {
       intro={
         <p>
           {lang === "es"
-            ? `En Panamá entregas tu equipo en uno de nuestros puntos y te pagamos por Yappy o ACH. En EE. UU. el envío es gratis y te pagamos por PayPal o Zelle. Así funciona.`
-            : `In Panama you drop off your device at one of our locations and get paid by Yappy or ACH. In the U.S. shipping is free and you get paid by PayPal or Zelle. Here’s how it works.`}
+            ? `En Panamá entregas tu equipo en nuestra tienda BH Tech y te pagamos por Yappy o ACH. En EE. UU. el envío es gratis y te pagamos por PayPal o Zelle. Así funciona.`
+            : `In Panama you drop off your device at our BH Tech store and get paid by Yappy or ACH. In the U.S. shipping is free and you get paid by PayPal or Zelle. Here’s how it works.`}
         </p>
       }
       sections={sections}

@@ -150,7 +150,7 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
               { label: variant?.category.kind === "tablet" ? t.picker.connectivity : t.picker.carrier, value: t.carriers[order.item.carrier] },
               { label: t.summary.storage, value: order.item.storage },
               { label: t.summary.condition, value: t.conditions[order.item.condition] },
-              { label: t.summary.payment, value: PAYOUT_LABELS[order.payout.method] },
+              { label: t.summary.payment, value: PAYOUT_LABELS[order.payout.method] + (order.payout.pending ? ` · ${t.checkout.payAtStore}` : "") },
               ...(pa ? [{ label: t.summary.delivery, value: loc?.name ?? null }] : []),
             ]}
             offer={price}

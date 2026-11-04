@@ -181,7 +181,11 @@ export default async function AdminOrderPage({ params, searchParams }: PageProps
             )}
             <p className="pt-2 text-muted">Payout</p>
             <p className="font-semibold">
-              {payout.method === "check" ? "Check by mail" : `${PAYOUT_LABELS[payout.method]}${payout.method === "ach" ? " account" : ""}: ${payout.handle}`}
+              {payout.method === "check"
+                ? "Check by mail"
+                : payout.pending
+                  ? `${PAYOUT_LABELS[payout.method]} — details pending (customer gives them at the store)`
+                  : `${PAYOUT_LABELS[payout.method]}${payout.method === "ach" ? " account" : ""}: ${payout.handle}`}
             </p>
             {payout.bank && <p>Bank: {payout.bank}{payout.accountType ? ` · ${payout.accountType === "savings" ? "Savings" : "Checking"}` : ""}</p>}
             {payout.accountName && <p>Name on account: {payout.accountName}</p>}

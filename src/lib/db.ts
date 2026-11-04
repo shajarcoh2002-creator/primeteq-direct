@@ -119,7 +119,15 @@ export interface Order {
    * handle = PayPal email, Zelle email / US mobile, Yappy mobile, or ACH account number.
    * accountName = name on the Zelle / Yappy / bank account. bank + accountType: ACH only.
    */
-  payout: { method: PayoutMethod; handle: string; accountName?: string; bank?: string; accountType?: "savings" | "checking" };
+  payout: {
+    method: PayoutMethod;
+    handle: string;
+    accountName?: string;
+    bank?: string;
+    accountType?: "savings" | "checking";
+    /** Panama: the customer will give their Yappy / ACH details at the store. */
+    pending?: boolean;
+  };
   item: {
     variantId: string;
     modelName: string;

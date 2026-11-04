@@ -6,7 +6,7 @@ import { getDict, getLang } from "@/i18n/server";
 import { type Country, type Order, type PayoutMethod, PAYOUTS_BY_COUNTRY, newOrderId, quoteById, saveOrder } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import { orderConfirmationEmail } from "@/lib/emails";
-import { getLocation } from "@/lib/locations";
+import { DEFAULT_DROPOFF, getLocation } from "@/lib/locations";
 import { parseAnswers } from "@/lib/quote-params";
 import { notifyNewOrder } from "@/lib/whatsapp";
 
@@ -55,12 +55,17 @@ export async function createOrder(_prev: CheckoutState, form: FormData): Promise
     if (!str("payoutName")) return fail(E.zelleName);
     payout.accountName = str("payoutName");
   }
-  if (payoutMethod === "yappy") {
+  // Panama: Yappy / ACH details are optional — the customer can give them at the store.
+  const later = (payoutMethod === "yappy" || payoutMethod === "ach") && !handle && !str("payoutHandleConfirm");
+  if (later) {
+    payout.pending = true;
+    if (str("payoutName")) payout.accountName = str("payoutName");
+  } else if (payoutMethod === "yappy") {
     if (!PA_MOBILE.test(handle)) return fail(E.yappy);
     if (!str("payoutName")) return fail(E.yappyName);
     payout.accountName = str("payoutName");
   }
-  if (payoutMethod === "ach") {
+  else if (payoutMethod === "ach") {
     const bank = str("achBank") === "other" ? str("achBankOther") : str("achBank");
     const accountType = str("achType");
     if (!bank || (accountType !== "savings" && accountType !== "checking") || digits(handle).length < 5 || !str("payoutName")) return fail(E.ach);
@@ -72,7 +77,7 @@ export async function createOrder(_prev: CheckoutState, form: FormData): Promise
   if (payoutMethod === "yappy") payout.handle = digits(handle).replace(/^507(?=\d{8}$)/, "");
   if (payoutMethod === "ach") payout.handle = digits(handle);
 
-  const location = country === "PA" ? getLocation(str("dropoff")) : undefined;
+  const location = country === "PA" ? (getLocation(str("dropoff")) ?? DEFAULT_DROPOFF) : undefined;
   if (country === "PA" && !location) return fail(E.location);
   if (form.get("terms") !== "on") return fail(E.terms);
 
