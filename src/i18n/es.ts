@@ -185,7 +185,14 @@ export const es: Dict = {
       "Face ID / sensor de huella",
       "La batería mantiene la carga",
     ],
-    q3: "¿El frente y la parte trasera están sin grietas?",
+    q3: "¿Tiene alguna grieta?",
+    q3help: "Revisa la pantalla (frente) y el vidrio o tapa de atrás.",
+    cracks: {
+      none: "Sin grietas",
+      front: "Grieta en el frente (pantalla)",
+      back: "Grieta atrás",
+      both: "Grietas en el frente y atrás",
+    },
     q4: "¿Cuál es su condición estética general?",
     cosmetic: {
       flawless: { title: "Impecable o como nuevo", body: "Sin rayones, marcas ni señales de uso." },
@@ -193,7 +200,8 @@ export const es: Dict = {
       fair: { title: "Rayado o con marcas", body: "Rayones, marcas o golpecitos visibles en la pantalla o el cuerpo." },
       poor: { title: "Dañado", body: "Doblado, astillado, abollado o descolorido. Sin grietas." },
     },
-    brokenNote: "Según tus respuestas, tu equipo se cotiza como que no funciona completamente o tiene grietas. Aun así puedes venderlo.",
+    brokenNote: "Según tus respuestas, tu equipo se cotiza como que no funciona completamente. Aun así puedes venderlo.",
+    crackNote: "Aceptamos equipos con grietas: la oferta solo toma en cuenta la grieta.",
     summaryFooter: "Tu oferta se basa en tus respuestas y se confirma cuando revisamos tu equipo.",
   },
   summary: {
@@ -210,7 +218,10 @@ export const es: Dict = {
     good: "Poco uso",
     fair: "Rayado o con marcas",
     poor: "Dañado (golpes, astillas, doblado)",
-    broken: "Roto / no funciona / con grietas",
+    crack_back: "Grieta atrás",
+    crack_front: "Grieta en el frente (pantalla)",
+    crack_both: "Grietas en el frente y atrás",
+    broken: "No enciende / no funciona completo",
   },
   carriers: {
     att: "AT&T",

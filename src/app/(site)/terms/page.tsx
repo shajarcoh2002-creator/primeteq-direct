@@ -73,8 +73,12 @@ export default async function TermsPage() {
           <li><strong>Rayado o con marcas:</strong> rayones, marcas o golpecitos visibles en la pantalla o el cuerpo.</li>
           <li><strong>Dañado:</strong> doblado, astillado, abollado o descolorido, sin grietas.</li>
           <li>
-            <strong>Roto:</strong> no enciende, no funciona completamente (pantalla, botones, cámaras, bocinas, conectividad, biometría o batería), o
-            tiene el frente o la parte trasera agrietados.
+            <strong>Con grietas:</strong> funciona, pero tiene grietas en el frente (pantalla), atrás, o en ambos. Una grieta en el frente descuenta el
+            doble que una grieta atrás.
+          </li>
+          <li>
+            <strong>No funciona:</strong> no enciende o no funciona completamente (pantalla, botones, cámaras, bocinas, conectividad, biometría o
+            batería).
           </li>
         </ul>
       ),
@@ -222,8 +226,12 @@ export default async function TermsPage() {
           <li><strong>Scratched or scuffed:</strong> obvious scratches, scuffs or nicks on the screen or body.</li>
           <li><strong>Damaged:</strong> bent, chipped, dented or sun-bleached, with no cracks.</li>
           <li>
-            <strong>Broken:</strong> doesn’t power on, doesn’t work fully (screen, buttons, cameras, speakers, connectivity, biometrics or battery), or
-            has a cracked front or back.
+            <strong>Cracked:</strong> works, but has cracks on the front (screen), the back, or both. A cracked front deducts twice as much as a
+            cracked back.
+          </li>
+          <li>
+            <strong>Not working:</strong> doesn’t power on or doesn’t work fully (screen, buttons, cameras, speakers, connectivity, biometrics or
+            battery).
           </li>
         </ul>
       ),

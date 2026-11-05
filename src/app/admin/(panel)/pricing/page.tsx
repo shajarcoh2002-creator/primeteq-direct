@@ -1,6 +1,6 @@
 import { CARRIER_LABELS, type CarrierId, type CurveId, getModel } from "@/data/catalog";
 import { getOverrides, getSettings } from "@/lib/db";
-import { CONDITION_LABELS, CURVE_LABELS, type Condition, quoteVariant } from "@/lib/pricing";
+import { type BaseCondition, CONDITION_LABELS, CURVE_LABELS, type Condition, conditionPctOf, quoteVariant } from "@/lib/pricing";
 import { resetPricing, savePricing } from "../../actions";
 
 const COST_FIELDS: { key: string; label: string; unit: "%" | "$"; help: string }[] = [
@@ -51,7 +51,7 @@ export default async function PricingPage({ searchParams }: PageProps<"/admin/pr
             <tr><td className="py-1.5">− Cleaning + shipping</td><td className="text-right">−{money(c.refurbCost + c.shippingCost)}</td></tr>
             <tr><td className="py-1.5">× iPhone calibration {settings.calibrationPct["apple-phone"]}%</td><td className="text-right">{money(beforeCal)} → {money(ex.base)}</td></tr>
             {(Object.keys(ex.offers) as Condition[]).map((k) => (
-              <tr key={k}><td className="py-1.5 font-semibold">Offer: {CONDITION_LABELS[k]} ({settings.conditionPct[k]}%)</td><td className="text-right text-base font-bold text-cash">${ex.offers[k]}</td></tr>
+              <tr key={k}><td className="py-1.5 font-semibold">Offer: {CONDITION_LABELS[k]} ({conditionPctOf(settings, k)}%)</td><td className="text-right text-base font-bold text-cash">${ex.offers[k]}</td></tr>
             ))}
           </tbody>
         </table>
@@ -76,12 +76,21 @@ export default async function PricingPage({ searchParams }: PageProps<"/admin/pr
           <div className="rounded-2xl border border-line bg-white p-5">
             <h2 className="font-bold">Condition adjustment (% of the “good” offer)</h2>
             <div className="mt-4 space-y-3">
-              {(Object.keys(settings.conditionPct) as Condition[]).map((k) => (
+              {(Object.keys(settings.conditionPct) as BaseCondition[]).map((k) => (
                 <div key={k} className="flex items-center justify-between gap-4">
                   <label htmlFor={`cond-${k}`} className="text-sm">{CONDITION_LABELS[k]}</label>
                   <input id={`cond-${k}`} name={`condition.${k}`} defaultValue={settings.conditionPct[k]} className="field !w-24 text-right" inputMode="decimal" />
                 </div>
               ))}
+              <div className="flex items-center justify-between gap-4 border-t border-line pt-3">
+                <label htmlFor="crackBackPct" className="text-sm">
+                  Cracked back: deduction %
+                  <span className="block text-xs text-muted">
+                    Front deducts 2× ({settings.crackBackPct * 2}%), front + back 3× ({settings.crackBackPct * 3}%).
+                  </span>
+                </label>
+                <input id="crackBackPct" name="crackBackPct" defaultValue={settings.crackBackPct} className="field !w-24 text-right" inputMode="decimal" />
+              </div>
             </div>
           </div>
           <div className="rounded-2xl border border-line bg-white p-5">

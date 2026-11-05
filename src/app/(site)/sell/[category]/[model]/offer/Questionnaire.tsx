@@ -6,14 +6,16 @@ import { useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Lock } from "lucide-react";
 import type { CarrierId, CategoryId } from "@/data/catalog";
 import { useI18n } from "@/i18n/client";
-import { type Answers, type Condition, conditionFromAnswers } from "@/lib/pricing";
+import { type Answers, type Condition, type Cracks, conditionFromAnswers } from "@/lib/pricing";
+import { CRACK_PARAM } from "@/lib/quote-params";
 import { QuoteSummary } from "@/components/QuoteSummary";
 
 const COSMETIC_IDS = ["flawless", "good", "fair", "poor"] as const;
 /** Index of the cellular check in t.q.checks — phones only. */
 const CELLULAR_CHECK = 5;
 
-type YesNoKey = "powersOn" | "functional" | "noCracks";
+type YesNoKey = "powersOn" | "functional";
+const CRACK_OPTIONS: Cracks[] = ["none", "front", "back", "both"];
 
 interface Props {
   variant: string;
@@ -74,10 +76,10 @@ export function Questionnaire(props: Props) {
 
   const locked2 = a.powersOn !== true;
   const locked3 = locked2 || a.functional !== true;
-  const locked4 = locked3 || a.noCracks !== true;
+  const locked4 = locked3 || a.cracks !== "none";
   // First unanswered, unlocked question — used for the error state.
   const missing: number | null =
-    condition ? null : a.powersOn === undefined ? 1 : a.functional === undefined ? 2 : a.noCracks === undefined ? 3 : 4;
+    condition ? null : a.powersOn === undefined ? 1 : a.functional === undefined ? 2 : a.cracks === undefined ? 3 : 4;
 
   const yesNo = (key: YesNoKey, q: number, locked: boolean) => (
     <div className="grid max-w-sm grid-cols-2 gap-3" role="radiogroup">
@@ -104,7 +106,7 @@ export function Questionnaire(props: Props) {
     v: variant,
     p: a.powersOn ? "1" : "0",
     f: a.functional ? "1" : "0",
-    n: a.noCracks ? "1" : "0",
+    n: a.cracks ? CRACK_PARAM[a.cracks] : "",
     k: a.cosmetic ?? "",
   });
 
@@ -149,7 +151,25 @@ export function Questionnaire(props: Props) {
           </Question>
 
           <Question n={3} title={q.q3} locked={locked3} invalid={tried && missing === 3}>
-            {yesNo("noCracks", 3, locked3)}
+            <p className="mb-3 text-sm text-muted">{q.q3help}</p>
+            <div className="grid gap-3 sm:grid-cols-2" role="radiogroup">
+              {CRACK_OPTIONS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  role="radio"
+                  aria-checked={a.cracks === c}
+                  data-selected={a.cracks === c}
+                  data-invalid={tried && missing === 3}
+                  disabled={locked3}
+                  className="option"
+                  onClick={() => set({ cracks: c, noCracks: c === "none" })}
+                >
+                  <span className="option-dot" aria-hidden />
+                  {q.cracks[c]}
+                </button>
+              ))}
+            </div>
           </Question>
 
           <Question n={4} title={q.q4} locked={locked4} invalid={tried && missing === 4}>
@@ -182,6 +202,7 @@ export function Questionnaire(props: Props) {
             {q.brokenNote}
           </p>
         )}
+        {condition?.startsWith("crack_") && <p className="mt-4 rounded-xl bg-paper p-4 text-sm text-ink-2">{q.crackNote}</p>}
 
         <div className="mt-8 flex flex-col-reverse gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
           <Link href={`/sell/${category}/${modelSlug}`} className="btn btn-secondary">

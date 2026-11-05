@@ -22,7 +22,7 @@ import {
   saveOverrides,
   saveSettings,
 } from "@/lib/db";
-import { CONDITIONS, type Condition, DEFAULT_SETTINGS, type PricingSettings, resaleKey } from "@/lib/pricing";
+import { type BaseCondition, CONDITIONS, type Condition, DEFAULT_SETTINGS, type PricingSettings, resaleKey } from "@/lib/pricing";
 
 const num = (form: FormData, key: string) => {
   const n = Number(String(form.get(key) ?? "").replace(/[$,\s]/g, ""));
@@ -124,10 +124,12 @@ export async function savePricing(form: FormData) {
     const v = num(form, `costs.${k}`);
     if (Number.isFinite(v)) next.costs[k] = v;
   }
-  for (const k of Object.keys(next.conditionPct) as Condition[]) {
+  for (const k of Object.keys(next.conditionPct) as BaseCondition[]) {
     const v = num(form, `condition.${k}`);
     if (Number.isFinite(v)) next.conditionPct[k] = v;
   }
+  const crack = num(form, "crackBackPct");
+  if (Number.isFinite(crack) && crack >= 0 && crack <= 33) next.crackBackPct = crack;
   for (const k of Object.keys(next.carrierPct) as (keyof PricingSettings["carrierPct"])[]) {
     const v = num(form, `carrier.${k}`);
     if (Number.isFinite(v)) next.carrierPct[k] = v;

@@ -152,7 +152,7 @@ export default async function AdminOrderPage({ params, searchParams }: PageProps
             <div><dt className="inline text-muted">Stated condition: </dt><dd className="inline">{CONDITION_LABELS[item.condition]}</dd></div>
             <div><dt className="inline text-muted">Powers on: </dt><dd className="inline">{yn(item.answers.powersOn)}</dd></div>
             <div><dt className="inline text-muted">Fully functional: </dt><dd className="inline">{yn(item.answers.functional)}</dd></div>
-            <div><dt className="inline text-muted">No cracks: </dt><dd className="inline">{yn(item.answers.noCracks)}</dd></div>
+            <div><dt className="inline text-muted">Cracks: </dt><dd className="inline">{item.answers.cracks ? { none: "None", front: "Front (screen)", back: "Back", both: "Front and back" }[item.answers.cracks] : yn(!item.answers.noCracks)}</dd></div>
             <div className="pt-2"><dt className="inline text-muted">Quoted offer: </dt><dd className="inline text-lg font-bold text-cash">${item.quotedPrice}</dd></div>
             {order.finalPrice !== null && (
               <div><dt className="inline text-muted">Final price: </dt><dd className="inline text-lg font-bold">${order.finalPrice}</dd></div>

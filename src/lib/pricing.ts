@@ -10,15 +10,22 @@
 import type { CarrierId, CurveId, DeviceModel, StorageOption } from "@/data/catalog";
 import { storageSlug } from "@/data/catalog";
 
-export type Condition = "flawless" | "good" | "fair" | "poor" | "broken";
-export const CONDITIONS: Condition[] = ["flawless", "good", "fair", "poor", "broken"];
+/** Conditions with their own % setting. Crack conditions are derived from crackBackPct. */
+export type BaseCondition = "flawless" | "good" | "fair" | "poor" | "broken";
+export type CrackCondition = "crack_back" | "crack_front" | "crack_both";
+export type Condition = BaseCondition | CrackCondition;
+export const CONDITIONS: Condition[] = ["flawless", "good", "fair", "poor", "crack_back", "crack_front", "crack_both", "broken"];
+export type Cracks = "none" | "front" | "back" | "both";
 
 export const CONDITION_LABELS: Record<Condition, string> = {
   flawless: "Flawless or like new",
   good: "Lightly used",
   fair: "Scratched or scuffed",
   poor: "Damaged (dents, chips, bent)",
-  broken: "Broken / not working / cracked",
+  crack_back: "Cracked back",
+  crack_front: "Cracked front (screen)",
+  crack_both: "Cracked front and back",
+  broken: "Doesn’t power on / not fully working",
 };
 
 export interface PricingSettings {
@@ -30,7 +37,12 @@ export interface PricingSettings {
     holdDepreciationPct: number;
     marginPct: number;
   };
-  conditionPct: Record<Condition, number>;
+  conditionPct: Record<BaseCondition, number>;
+  /**
+   * Deduction (% of the “good” offer) for a cracked back. A cracked front deducts twice as much,
+   * and front + back deducts both (3×).
+   */
+  crackBackPct: number;
   carrierPct: Record<CarrierId, number>;
   /** [ageMonths, % of launch price] points, interpolated linearly. */
   curves: Record<CurveId, [number, number][]>;
@@ -62,6 +74,8 @@ export const DEFAULT_SETTINGS: PricingSettings = {
     marginPct: 7,
   },
   conditionPct: { flawless: 100, good: 100, fair: 96, poor: 57, broken: 41 },
+  // Back 20% off, front 40% off (2× back), both 60% off ≈ Gazelle's cracked/broken price (41%).
+  crackBackPct: 20,
   // AT&T from Gazelle (17 Pro Max 1TB: $726 AT&T vs $811 unlocked); T-Mobile and Verizon assumed the same until checked.
   // Panama: Más Móvil priced like a US carrier lock, Tigo like unlocked (per business decision).
   carrierPct: { unlocked: 100, att: 89.5, tmobile: 89.5, verizon: 89.5, masmovil: 89.5, tigo: 100, other: 80, wifi: 100, cellular: 108 },
@@ -132,8 +146,18 @@ export function baseOffer(resale: number, curve: CurveId, settings: PricingSetti
   return (raw * settings.calibrationPct[curve]) / 100;
 }
 
+const CRACK_MULTIPLIER: Record<CrackCondition, number> = { crack_back: 1, crack_front: 2, crack_both: 3 };
+
+/** % of the “good” offer paid for a condition. */
+export function conditionPctOf(settings: PricingSettings, condition: Condition): number {
+  if (condition in CRACK_MULTIPLIER) {
+    return Math.max(0, 100 - settings.crackBackPct * CRACK_MULTIPLIER[condition as CrackCondition]);
+  }
+  return settings.conditionPct[condition as BaseCondition];
+}
+
 export function finalOffer(base: number, carrier: CarrierId, condition: Condition, settings: PricingSettings) {
-  const value = (base * settings.carrierPct[carrier] * settings.conditionPct[condition]) / 10_000;
+  const value = (base * settings.carrierPct[carrier] * conditionPctOf(settings, condition)) / 10_000;
   return Math.max(settings.minOffer, Math.floor(value));
 }
 
@@ -163,13 +187,20 @@ export function quoteVariant(
 export interface Answers {
   powersOn: boolean;
   functional: boolean;
+  /** true only when cracks === "none". Kept for older orders. */
   noCracks: boolean;
-  cosmetic: Exclude<Condition, "broken"> | null;
+  /** Where the device is cracked. Missing on older orders. */
+  cracks?: Cracks;
+  cosmetic: "flawless" | "good" | "fair" | "poor" | null;
 }
 
+const CRACK_CONDITION: Record<Exclude<Cracks, "none">, CrackCondition> = { back: "crack_back", front: "crack_front", both: "crack_both" };
+
 export function conditionFromAnswers(a: Partial<Answers>): Condition | null {
-  if (a.powersOn === false || a.functional === false || a.noCracks === false) return "broken";
-  if (a.powersOn && a.functional && a.noCracks && a.cosmetic) return a.cosmetic;
+  if (a.powersOn === false || a.functional === false) return "broken";
+  if (a.cracks && a.cracks !== "none") return CRACK_CONDITION[a.cracks];
+  if (a.cracks === undefined && a.noCracks === false) return "crack_both";
+  if (a.powersOn && a.functional && (a.cracks === "none" || a.noCracks) && a.cosmetic) return a.cosmetic;
   return null;
 }
 
@@ -184,6 +215,7 @@ export function mergeSettings(saved: Partial<PricingSettings> | null | undefined
     curves: { ...d.curves, ...saved.curves },
     calibrationPct: { ...d.calibrationPct, ...saved.calibrationPct },
     storagePremiumPct: saved.storagePremiumPct ?? d.storagePremiumPct,
+    crackBackPct: saved.crackBackPct ?? d.crackBackPct,
     offerValidDays: saved.offerValidDays ?? d.offerValidDays,
     minOffer: saved.minOffer ?? d.minOffer,
   };

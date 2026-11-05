@@ -185,7 +185,14 @@ export const en = {
       "Face ID / fingerprint sensor",
       "Battery holds a charge",
     ],
-    q3: "Are the front and back free of cracks?",
+    q3: "Does it have any cracks?",
+    q3help: "Check the screen (front) and the back glass or cover.",
+    cracks: {
+      none: "No cracks",
+      front: "Cracked front (screen)",
+      back: "Cracked back",
+      both: "Cracked front and back",
+    },
     q4: "What’s the overall cosmetic condition?",
     cosmetic: {
       flawless: { title: "Flawless or like new", body: "No scratches, scuffs or signs of use." },
@@ -193,7 +200,8 @@ export const en = {
       fair: { title: "Scratched or scuffed", body: "Obvious scratches, scuffs or nicks on the screen or body." },
       poor: { title: "Damaged", body: "Bent, chipped, dented or sun-bleached. No cracks." },
     },
-    brokenNote: "Based on your answers, your device is quoted as not fully working or cracked. You can still sell it.",
+    brokenNote: "Based on your answers, your device is quoted as not fully working. You can still sell it.",
+    crackNote: "Cracked devices are welcome — the offer just takes the crack into account.",
     summaryFooter: "Your offer is based on your answers and confirmed when we inspect your device.",
   },
   summary: {
@@ -210,7 +218,10 @@ export const en = {
     good: "Lightly used",
     fair: "Scratched or scuffed",
     poor: "Damaged (dents, chips, bent)",
-    broken: "Broken / not working / cracked",
+    crack_back: "Cracked back",
+    crack_front: "Cracked front (screen)",
+    crack_both: "Cracked front and back",
+    broken: "Doesn’t power on / not fully working",
   },
   carriers: {
     att: "AT&T",
